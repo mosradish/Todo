@@ -1,0 +1,265 @@
+.App {
+  text-align: center;
+}
+
+.App-logo {
+  height: 40vmin;
+  pointer-events: none;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .App-logo {
+    animation: App-logo-spin infinite 20s linear;
+  }
+}
+
+.App-header {
+  background-color: #282c34;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  font-size: calc(10px + 2vmin);
+  color: white;
+}
+
+.App-link {
+  color: #61dafb;
+}
+
+@keyframes App-logo-spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/************************************************/
+/* common css part */
+
+:root {
+  --header-color: #FFCC66; /* header equal footer */
+  --footer-color: #FFCC66;
+  --nav-bg-color: #FFE5B1;
+  --link-color: #336699;
+  --link-bover-color: #6195CA;
+  --global-bg-color: white;
+  --main-font-color: white;
+  --button-bg-color: #EA9B00;
+  --button-shadow-color: #D38B00;
+  --button-bg-hover-color: #FFB522;
+  --button-boreder-color: #FFE5B1;
+  --main-font: "メイリオ", "Meiryo", "MS Pゴシック", "Hiragino Kaku Gothic Pro", "ヒラギノ角ゴ Pro W3", sans-serif;
+}
+
+*, *:before, *:after {
+  -webkit-box-sizing: border-box;
+  -moz-box-sizing: border-box;
+  box-sizing: border-box;
+}
+
+* {
+  margin : 0px;
+  padding : 0px;
+}
+
+html, body {
+  width:100%;
+  height:100%; /*for Old*/
+  height:100vh;
+}
+
+html {
+  font-size : 62.5%;
+}
+
+body {
+  background-color: var(--global-bg-color);
+  text-align : center;
+  font-size : 1.6rem;
+  text-size-adjust : 100%;
+  -webkit-text-size-adjust: 100%; /* Safari */
+  line-height: 1.8em;
+  font-family: var(--main-font);
+}
+
+img {
+  border : 0px none;
+}
+
+table {
+  border-collapse : collapse;
+  width : 100%;
+  margin-top : 15px;
+}
+
+a {
+  color: var(--link-color);
+  display: inline-block;
+  text-decoration: none;
+}
+
+a:hover {
+  color: var(--link-hover-color);
+  text-decoration : underline;
+}
+
+p {
+  margin-bottom : 1em;
+}
+
+ul {
+  list-style : none;
+}
+
+i {
+  padding: 5px;
+}
+
+/************************************************/
+/* h */
+
+h1 {
+  text-align: center;
+  width: 100%;
+  font-size: 3.2rem;
+  margin-bottom: 0.5em;
+  line-height: 1.5em;
+  padding: 0.5em 0.5em 0.5em 0;
+}
+
+h2 {
+  text-align: left;
+  width: 100%;
+  font-size: 2.8rem;
+  margin-bottom: 0.5em;
+  line-height: 1.3em;
+  padding: 0.5em;
+  padding-left: 0em;
+  position: relative;
+}
+
+h3 {
+  text-align: left;
+  width: 100%;
+  font-size: 2.4rem;
+  margin-bottom: 0.5em;
+  line-height: 1.5em;
+  padding: 0.5em;
+  padding-left: 0em;
+}
+
+h4 {
+  text-align: left;
+  width : 100%;
+  font-size : 2rem;
+  margin-bottom : 0.5em;
+  padding: 0.5em;
+  padding-left: 0em;
+}
+
+h5 {
+  text-align: left;
+  width : 100%;
+  font-size : 1.6rem;
+  margin-bottom : 0.5em;
+  padding: 0.5em;
+  padding-left: 0em;
+}
+
+/************************************************/
+/* button design */
+
+button {
+  transform: translateY(-2.5px);
+  background-color: var(--button-bg-color);
+  color: white;
+  border: var(--button-boreder-color) 1px solid;
+  border-bottom: 5px var(--button-shadow-color) solid;
+  border-radius: 15px;
+  transition: transform 0.1s ease, border-bottom 0.1s ease, background-color 0.2s ease;
+}
+
+button:hover {
+  cursor: pointer;
+  transform: translateY(0.5px);  /* ボタンが押されるような効果 */
+  background-color: var(--button-bg-hover-color);
+  border-bottom: 2px var(--button-shadow-color) solid; /* 押したときに影を浅くする */
+}
+
+button:disabled {
+  transform: none;
+  background-color: gray;
+  color: black;
+  border: none;
+  cursor: not-allowed;
+}
+
+button:disabled:hover {
+  transform: none;  /* 無効状態では押すエフェクトを無効化 */
+  background-color: gray;
+  border-bottom: none;
+}
+
+
+/************************************************/
+/* main_wrapper */
+
+.main_wrapper {
+  width: 80%;
+  margin: 15px 10%;
+}
+
+/************************************************/
+/* input_area */
+
+.input_area {
+  width: 100%;
+  height: 30px;
+  margin: 30px auto;
+}
+
+.input_area input {
+  width: 50%;
+  height: 30px;
+  margin-right: 15px;
+}
+
+.input_area button {
+  padding: 0 15px;
+  width: 60px;
+  height: 30px;
+}
+
+/************************************************/
+/* table */
+
+.tasklist {
+  width: 100%;
+  margin: auto;
+
+  border-collapse: separate;
+  border-spacing: 0 15px;
+}
+
+.tasklist .id {
+  width: 15px;
+  border-bottom: 1px solid #ccc;
+}
+
+.tasklist .title {
+  border-bottom: 1px solid #ccc;
+}
+
+.tasklist button {
+  width: 100px;
+  height: 30px;
+}
+
+.tasklist .button {
+  padding: 0 15px;
+  width: 60px;
+}
