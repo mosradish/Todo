@@ -1,8 +1,10 @@
-from flask import Flask, request, jsonify
+from flask import Flask, send_from_directory, request, jsonify
 from flask_sqlalchemy import SQLAlchemy
 from flask_cors import CORS
+import os
 
-app = Flask(__name__)
+app = Flask(__name__, static_folder='../frontend/build', static_url_path='/')
+
 CORS(app)  # ReactとFlaskの通信を許可
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///todo.db'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
@@ -17,6 +19,10 @@ class Task(db.Model):
 # 初回起動時のデータベース作成
 with app.app_context():
     db.create_all()
+
+@app.route('/')
+def index():
+    return send_from_directory(os.path.join(app.static_folder, 'index.html'))
 
 # タスク一覧を取得
 @app.route('/api/tasks', methods=['GET'])
