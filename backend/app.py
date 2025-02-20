@@ -25,7 +25,7 @@ with app.app_context():
 
 @app.route('/')
 def index():
-   return send_from_directory(app.static_folder, 'index.html')
+    return send_from_directory(os.path.join(app.static_folder, 'index.html'))
 
 # タスク一覧を取得
 @app.route('/api/tasks', methods=['GET'])
