@@ -1,7 +1,9 @@
 from flask import Flask, send_from_directory, request, jsonify
 from flask_sqlalchemy import SQLAlchemy
 from flask_cors import CORS
+from datetime import datetime
 import os
+import pytz  # pytzライブラリをインポート
 
 app = Flask(__name__, static_folder='../frontend/build', static_url_path='/')
 
@@ -14,6 +16,7 @@ db = SQLAlchemy(app)
 class Task(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     title = db.Column(db.String(200), nullable=False)
+    created_at = db.Column(db.DateTime, default=datetime.utcnow)
     completed = db.Column(db.Boolean, default=False)
 
 # 初回起動時のデータベース作成
@@ -28,16 +31,35 @@ def index():
 @app.route('/api/tasks', methods=['GET'])
 def get_tasks():
     tasks = Task.query.all()
-    return jsonify([{"id": task.id, "title": task.title, "completed": task.completed} for task in tasks])
+
+    # 日本時間に変換
+    japan_tz = pytz.timezone('Asia/Tokyo')
+
+    return jsonify([{
+        "id": task.id,
+        "title": task.title,
+        "created_at": task.created_at.astimezone(japan_tz).isoformat(),  # 日本時間でISO形式
+        "completed": task.completed
+    } for task in tasks])
 
 # タスクを追加
 @app.route('/api/tasks', methods=['POST'])
 def add_task():
     data = request.json
-    new_task = Task(title=data['title'], completed=False)
+    # タスクを日本時間で作成
+    japan_tz = pytz.timezone('Asia/Tokyo')
+    created_at_japan_time = datetime.now(japan_tz)
+
+    new_task = Task(title=data['title'], completed=False, created_at=created_at_japan_time)
     db.session.add(new_task)
     db.session.commit()
-    return jsonify({"id": new_task.id, "title": new_task.title, "completed": new_task.completed})
+
+    return jsonify({
+        "id": new_task.id,
+        "title": new_task.title,
+        "created_at": new_task.created_at.astimezone(japan_tz).isoformat(),  # 日本時間でISO形式
+        "completed": new_task.completed
+    })
 
 # タスクの完了状態を更新
 @app.route('/api/tasks/<int:task_id>', methods=['PUT'])

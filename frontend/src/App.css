@@ -171,6 +171,16 @@ h5 {
 }
 
 /************************************************/
+/* error */
+
+.error {
+  font-size: 2.4rem;
+  font-weight: bold;
+  color: red;
+  line-height: 1.5em;
+}
+
+/************************************************/
 /* button design */
 
 button {
@@ -245,12 +255,24 @@ button:disabled:hover {
   border-spacing: 0 15px;
 }
 
-.tasklist .id {
-  width: 15px;
-  border-bottom: 1px solid #ccc;
+.tasklist caption {
+  font-size: 2.4rem;
+  font-weight: bold;
+  margin: auto;
 }
 
-.tasklist .title {
+.tasklist .id {
+  width: 15px;
+
+}
+
+.tasklist .date {
+  width: 300px;
+}
+
+.tasklist tbody .id,
+.tasklist tbody .title,
+.tasklist tbody .date {
   border-bottom: 1px solid #ccc;
 }
 
@@ -262,4 +284,13 @@ button:disabled:hover {
 .tasklist .button {
   padding: 0 15px;
   width: 60px;
+}
+
+/************************************************/
+/* task decoration */
+
+.redline {
+  color: gray;
+  text-decoration: line-through;
+  text-decoration-color: red;
 }

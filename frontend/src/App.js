@@ -62,22 +62,47 @@ function App() {
 
                 {error && <p className="error">{error}</p>}  {/* エラーメッセージ表示 */}
 
-                <table class="tasklist">
+                <table className="tasklist">
                     <caption>タスク一覧</caption>
-                    {tasks.map(task => (
-                        <tr key={task.id}>
-                            <th class="id">{task.id}</th>
-                            <td class="title" style={{ textDecoration: task.completed ? "line-through" : "none" }}>{task.title}</td>
-                            <td class="button">
-                                <button onClick={() => toggleTask(task.id)}>
-                                    {task.completed ? "未完了にする" : "完了"}
-                                </button>
-                            </td>
-                            <td class="button">
-                                <button onClick={() => deleteTask(task.id)}>削除</button>
-                            </td>
-
+                    <thead>
+                        <tr>
+                            <th className="id">ID</th>
+                            <th className="title">タイトル</th>
+                            <th className="date">作成日時</th>
+                            <th className="button">操作</th>
+                            <th className="button">削除</th>
                         </tr>
+                    </thead>
+                    {tasks.map(task => (
+                        <tbody>
+                            <tr key={task.id}>
+                                <th className="id">{task.id}</th>
+                                <td className={`title ${task.completed ? 'redline' : ''}`}>{task.title}</td>
+                                <td className="date">
+                                    {task.created_at ? 
+                                        new Intl.DateTimeFormat('ja-JP', {
+                                            timeZone: 'Asia/Tokyo',
+                                            year: 'numeric',
+                                            month: 'long',
+                                            day: 'numeric',
+                                            weekday: 'short',
+                                            hour: 'numeric',
+                                            minute: 'numeric',
+                                        }).format(new Date(task.created_at))
+                                        : "N/A"
+                                    }
+                                </td>
+                                <td className="button">
+                                    <button onClick={() => toggleTask(task.id)}>
+                                        {task.completed ? "未完了にする" : "完了"}
+                                    </button>
+                                </td>
+                                <td className="button">
+                                    <button onClick={() => deleteTask(task.id)}>削除</button>
+                                </td>
+
+                            </tr>
+                        </tbody>
                     ))}
                 </table>
             </div>
