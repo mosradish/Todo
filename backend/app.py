@@ -8,7 +8,7 @@ import pytz  # pytzライブラリをインポート
 app = Flask(__name__, static_folder='../frontend/build', static_url_path='/')
 
 CORS(app)  # ReactとFlaskの通信を許可
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///todo.db'
+app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get('DATABASE_URL', 'sqlite:///todo.db')
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 db = SQLAlchemy(app)
 
