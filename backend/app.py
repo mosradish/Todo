@@ -3,11 +3,14 @@ from flask_sqlalchemy import SQLAlchemy
 from flask_cors import CORS
 from datetime import datetime
 import os
-import pytz  # pytzライブラリをインポート
+import pytz
 
-app = Flask(__name__, static_folder='../frontend/build', static_url_path='/')
+app = Flask(__name__, static_folder='frontend/build/static')
 
-CORS(app)  # ReactとFlaskの通信を許可
+# ReactとFlaskの通信を許可
+CORS(app)
+
+# 環境変数 DATABASE_URL が設定されていなければ、SQLite を使用
 app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get('DATABASE_URL', 'sqlite:///todo.db')
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 db = SQLAlchemy(app)
@@ -24,8 +27,9 @@ with app.app_context():
     db.create_all()
 
 @app.route('/')
-def index():
-       return send_from_directory(os.path.join(app.static_folder), 'index.html')
+def serve():
+    return send_from_directory(os.path.join(app.root_path, 'frontend/build'), 'index.html')
+
 # タスク一覧を取得
 @app.route('/api/tasks', methods=['GET'])
 def get_tasks():
@@ -81,4 +85,4 @@ def delete_task(task_id):
     return jsonify({"message": "Task deleted!"})
 
 if __name__ == '__main__':
-    app.run(debug=True)
+    app.run()
