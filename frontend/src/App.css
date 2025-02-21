@@ -52,6 +52,7 @@
   --button-shadow-color: #D38B00;
   --button-bg-hover-color: #FFB522;
   --button-boreder-color: #FFE5B1;
+  --hr-color: #FFE5B1;
   --main-font: "メイリオ", "Meiryo", "MS Pゴシック", "Hiragino Kaku Gothic Pro", "ヒラギノ角ゴ Pro W3", sans-serif;
 }
 
@@ -238,9 +239,14 @@ button:disabled:hover {
   margin-right: 15px;
 }
 
+.input_area .datepicker {
+  width: 170px;
+  text-align: center;
+}
+
 .input_area button {
   padding: 0 15px;
-  width: 60px;
+  width: 100px;
   height: 30px;
 }
 
@@ -250,9 +256,8 @@ button:disabled:hover {
 .tasklist {
   width: 100%;
   margin: auto;
-
   border-collapse: separate;
-  border-spacing: 0 15px;
+  border-spacing: 0 20px;
 }
 
 .tasklist caption {
@@ -261,19 +266,26 @@ button:disabled:hover {
   margin: auto;
 }
 
+.tasklist th,
+.tasklist td {
+  height: 35px;
+}
+
 .tasklist .id {
   width: 15px;
-
 }
 
 .tasklist .date {
-  width: 300px;
+  width: 200px;
 }
 
-.tasklist tbody .id,
-.tasklist tbody .title,
-.tasklist tbody .date {
-  border-bottom: 1px solid #ccc;
+.tasklist .complete {
+  width: 100px;
+}
+
+.tasklist .button {
+  padding: 0 15px;
+  width: 130px;
 }
 
 .tasklist button {
@@ -281,9 +293,17 @@ button:disabled:hover {
   height: 30px;
 }
 
-.tasklist .button {
-  padding: 0 15px;
-  width: 60px;
+.tasklist tbody .id,
+.tasklist tbody .title,
+.tasklist tbody .date,
+.tasklist tbody .complete {
+  border-bottom: 1px solid #ccc;
+}
+
+.tasklist.checkbox-icon {
+  width: 20px;
+  height: 20px;
+  margin-right: 10px; /* アイコンとテキストの間にスペースを追加 */
 }
 
 /************************************************/
@@ -293,4 +313,29 @@ button:disabled:hover {
   color: gray;
   text-decoration: line-through;
   text-decoration-color: red;
+}
+
+/************************************************/
+/* common */
+
+.red {
+  color: red;
+}
+
+.green {
+  color: green;
+}
+
+.gray {
+  color: gray;
+}
+
+.bold {
+  font-weight: bold;
+}
+
+hr {
+  border : none;
+  border-bottom : var(--hr-color) dotted 10px;
+  margin : 15px auto 30px auto;
 }
