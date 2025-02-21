@@ -76,7 +76,7 @@ def add_task():
     })
 
 # タスクの完了状態を更新
-@@app.route('/api/tasks/<int:id>', methods=['PUT'])
+@app.route('/api/tasks/<int:id>', methods=['PUT'])
 def update_task(id):
     task = Task.query.get(id)
     if not task:
