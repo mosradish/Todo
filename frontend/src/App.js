@@ -8,9 +8,6 @@ import weekday from "dayjs/plugin/weekday";
 import updateLocale from "dayjs/plugin/updateLocale";
 import { LocalizationProvider, DateTimePicker} from '@mui/x-date-pickers';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
-import TextField from '@mui/material/TextField';
-import { format } from "date-fns";
-import { ja } from "date-fns/locale";
 import dayjs from 'dayjs'; // dayjs をインポート
 import 'dayjs/locale/ja';  // 日本語ロケールのインポート
 
@@ -26,7 +23,7 @@ function App() {
     const [taskTitle, setTaskTitle] = useState("");
     const [taskDate, setTaskDate] = useState(new Date());
     const [error, setError] = useState("");
-    const [selectedDate, setSelectedDate] = useState(dayjs()); // selectedDate と setSelectedDate を定義
+    const [selectedDate, setSelectedDate] = useState(dayjs());  // dayjsで初期化
 
     // タスク一覧を取得
     useEffect(() => {
@@ -55,7 +52,7 @@ function App() {
         if (!taskTitle) return;
 
         // 期限が設定されている場合、ISO形式に変換
-        const dueDate = selectedDate instanceof Date && !isNaN(selectedDate) ? selectedDate.toISOString() : null;
+        const dueDate = selectedDate.isValid() ? selectedDate.toISOString() : null;
 
         axios.post("http://127.0.0.1:5000/api/tasks", { 
             title: taskTitle,
@@ -113,15 +110,15 @@ function App() {
                         {/* 日付と時間の両方を選択 */}
                         <DateTimePicker
                             label="日時を選択"
-                            value={dayjs(selectedDate).isValid() ? dayjs(selectedDate) : dayjs()} // selectedDate を確実に dayjs インスタンスに変換
-                            onChange={setSelectedDate}
+                            value={selectedDate.isValid() ? selectedDate : dayjs()}  // dayjs インスタンスをそのまま渡す
+                            onChange={(newDate) => setSelectedDate(newDate)}  // 新しい日付が選ばれたときに setSelectedDate を呼び出す
                             disablePast
-                            minutesStep={5}  // 5分刻み
-                            ampm={false}  // 24時間表示
+                            minutesStep={5}
+                            ampm={false}
                             slotProps={{
                                 textField: {
                                     value: formattedDate,  // フォーマット済みの日付を表示
-                                    onChange: (e) => {},  // 入力の変更を無視する（valueは変更されません）
+                                    onChange: (e) => {},  // 入力の変更を無視
                                     inputProps: {
                                         variant: "outlined",
                                         margin: "normal",
