@@ -229,11 +229,12 @@ h5 {
 }
 
 .input_area .limit {
+  min-width: 50px;
   font-size: 1.8rem;
   font-weight: bold;
 }
 
-.input_area button.add{
+.input_area button.add {
   min-width: 100px;
   height: 30px;
 }
@@ -274,6 +275,10 @@ h5 {
   font-size: 1.6rem;
   width: 300px;
   height: 30px;
+}
+
+.MuiTextField-root.MuiFormControl-root label {
+  font-size: 1.4rem;
 }
 
 /************************************************/

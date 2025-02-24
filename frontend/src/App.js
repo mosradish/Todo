@@ -6,11 +6,22 @@ import Footer from './components/Footer';
 import localizedFormat from "dayjs/plugin/localizedFormat";
 import weekday from "dayjs/plugin/weekday";
 import updateLocale from "dayjs/plugin/updateLocale";
-import { LocalizationProvider, DateTimePicker} from '@mui/x-date-pickers';
-import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
-import dayjs from 'dayjs'; // dayjs をインポート
-import 'dayjs/locale/ja';  // 日本語ロケールのインポート
 
+//dayjs
+import dayjs from 'dayjs';
+import 'dayjs/locale/ja';  // 日本語ロケールのインポート
+import utc from "dayjs/plugin/utc";
+import timezone from "dayjs/plugin/timezone";
+
+//mui
+import { DateTimePicker } from '@mui/x-date-pickers/DateTimePicker';
+import { TextField } from '@mui/material';
+import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
+import { LocalizationProvider} from '@mui/x-date-pickers';
+import OutlinedInput from '@mui/material/OutlinedInput';
+
+dayjs.extend(utc);
+dayjs.extend(timezone);
 dayjs.extend(localizedFormat);
 dayjs.extend(weekday);
 dayjs.extend(updateLocale);
@@ -18,12 +29,16 @@ dayjs.updateLocale("ja", {
     weekdays: ["日", "月", "火", "水", "木", "金", "土"],
 });
 
+// 日本語ロケールを設定
+dayjs.locale('ja');
+
 function App() {
     const [tasks, setTasks] = useState([]);
     const [taskTitle, setTaskTitle] = useState("");
-    const [taskDate, setTaskDate] = useState(new Date());
+    const [taskDate, setTaskDate] = useState(new dayjs());
     const [error, setError] = useState("");
-    const [selectedDate, setSelectedDate] = useState(dayjs());  // dayjsで初期化
+    const [selectedDate, setSelectedDate] = useState(dayjs());
+    const [inputValue, setInputValue] = useState(selectedDate.format('YYYY年M月D日 H時m分'));
 
     // タスク一覧を取得
     useEffect(() => {
@@ -52,19 +67,26 @@ function App() {
         if (!taskTitle) return;
 
         // 期限が設定されている場合、ISO形式に変換
-        const dueDate = selectedDate.isValid() ? selectedDate.toISOString() : null;
+        const japanTz = "Asia/Tokyo"; // タイムゾーン指定
+        const dueDate = dayjs(selectedDate).tz(japanTz).format(); // ISO 8601 形式
 
         axios.post("http://127.0.0.1:5000/api/tasks", { 
             title: taskTitle,
             due_date: dueDate, // due_dateをサーバーに渡す
         })
-            .then((response) => {
-                setTasks((prevTasks) => [...prevTasks, response.data]); // 新しいタスクを追加
-                setTaskTitle("");
-                setTaskDate(new Date()); // 日付をリセット
-            })
-            .catch(error => setError("タスクの追加中にエラーが発生しました"));
+
+        .then((response) => {
+            setTasks((prevTasks) => [...prevTasks, response.data]); // 新しいタスクを追加
+            setTaskTitle(""); // タスクタイトルをリセット
+            setTaskDate(new dayjs()); // 日付をリセット
+        })
+        .catch(error => {
+            setError("タスクの追加中にエラーが発生しました");
+            console.error(error);
+        });
+
     };
+    
 
     // タスクの完了状態を更新
     const toggleTask = (id, currentStatus) => {
@@ -85,10 +107,19 @@ function App() {
             .then(() => fetchTasks());
     };
 
+    
+    // 日付が変更されたときの処理
+    const handleDateChange = (newValue) => {
+        const parsedDate = dayjs(newValue, 'YYYY年MM月DD日 HH時mm分');
+        if (parsedDate.isValid()) {
+          setSelectedDate(parsedDate);
+          setInputValue(parsedDate.format('YYYY年MM月DD日 HH時mm分'));  // 入力フィールドのフォーマット更新
+        }
+      };
+
     // 完了タスクと未完了タスクを分ける
     const completedTasks = tasks.filter(task => task.completed);
     const pendingTasks = tasks.filter(task => !task.completed);
-    const formattedDate = selectedDate ? selectedDate.format("YYYY年M月D日 (dd) H時m分") : "";
 
     return (
         <div className="app_container">
@@ -106,28 +137,38 @@ function App() {
                         placeholder="新しいタスク"
                     />
                     <span className="limit">期限 : </span>
+
                     <LocalizationProvider dateAdapter={AdapterDayjs}>
                         {/* 日付と時間の両方を選択 */}
                         <DateTimePicker
                             label="日時を選択"
-                            value={selectedDate.isValid() ? selectedDate : dayjs()}  // dayjs インスタンスをそのまま渡す
-                            onChange={(newDate) => setSelectedDate(newDate)}  // 新しい日付が選ばれたときに setSelectedDate を呼び出す
+                            value={selectedDate}  // ここではdayjsオブジェクトを保持
+                            onChange={(newValue) => {
+                                if (newValue && dayjs.isDayjs(newValue)) {
+                                    setSelectedDate(newValue);
+                                    setInputValue(newValue.format('YYYY年MM月DD日 HH時mm分'));  // フォーマットして更新
+                                }
+                            }}
                             disablePast
-                            minutesStep={5}
-                            ampm={false}
-                            slotProps={{
-                                textField: {
-                                    value: formattedDate,  // フォーマット済みの日付を表示
-                                    onChange: (e) => {},  // 入力の変更を無視
-                                    inputProps: {
-                                        variant: "outlined",
-                                        margin: "normal",
-                                        size: "small",
-                                    },
-                                },
+                            minutesStep={5}  // 5分刻み
+                            ampm={false}  // 24時間表示
+                            format="YYYY年MM月DD日 HH時mm分"
+                            slots={{
+                                textField: (params) => (
+                                    <TextField
+                                    {...params}
+                                    value={inputValue}
+                                    onChange={(e) => {
+                                        const parsedDate = dayjs(e.target.value, 'YYYY年MM月DD日 HH時mm分');
+                                        if (parsedDate.isValid()) {
+                                        setSelectedDate(parsedDate);
+                                        setInputValue(e.target.value);
+                                        }
+                                    }}
+                                    />
+                                )
                             }}
                         />
-
                     </LocalizationProvider>
                     <button className="add" onClick={addTask} disabled={!taskTitle}>追加</button>
                 </div>
@@ -146,7 +187,6 @@ function App() {
                             <th className="title">タイトル</th>
                             <th className="date">作成日時</th>
                             <th className="date">期限</th>
-                            <th className="complete">完了/未完了</th>
                             <th className="button">操作</th>
                             <th className="button">削除</th>
                         </tr>
@@ -164,8 +204,8 @@ function App() {
                                             month: 'long',
                                             day: 'numeric',
                                             weekday: 'short',
-                                            hour: 'numeric',
-                                            minute: 'numeric',
+                                            hour: '2-digit',
+                                            minute: '2-digit',
                                         }).format(new Date(task.created_at))
                                         : "N/A"
                                     }
@@ -179,18 +219,10 @@ function App() {
                                             month: 'long',
                                             day: 'numeric',
                                             weekday: 'short',
-                                            hour: 'numeric',
-                                            minute: 'numeric',
+                                            hour: '2-digit',
+                                            minute: '2-digit',
                                         }).format(new Date(task.due_date))
                                         : "N/A"
-                                    }
-                                </td>
-                                <td className={`complete bold ${task.completed ? 'green' : 'red'}`}>
-                                    {task.completed ? (
-                                            <>完了<i class="fa-regular fa-square-check checkbox-icon"></i></> 
-                                        ) : (
-                                            <>未完了<i class="fa-regular fa-square checkbox-icon"></i></>
-                                        )
                                     }
                                 </td>
                                 <td className="button">
@@ -218,7 +250,7 @@ function App() {
                             <th className="title">タイトル</th>
                             <th className="date">期限</th>
                             <th className="date">完了日時</th>
-                            <th className="complete">完了/未完了</th>
+                            <th className="date">完了差分</th>
                             <th className="button">操作</th>
                             <th className="button">削除</th>
                         </tr>
@@ -229,8 +261,7 @@ function App() {
                                 <th className="id">{task.id}</th>
                                 <td className={`title ${task.completed ? 'redline' : ''}`}>{task.title}</td>
                                 {/* 期日 */}
-                                <td className=
-                                    {`date ${!task.completed && (new Date(task.due_date) <= new Date()) ? 'gray' : ''} ${task.completed ? 'green' : ''}`}>
+                                <td className="date">
                                     {task.due_date?
                                         new Intl.DateTimeFormat('ja-JP', {
                                             timeZone: 'Asia/Tokyo',
@@ -238,8 +269,8 @@ function App() {
                                             month: 'long',
                                             day: 'numeric',
                                             weekday: 'short',
-                                            hour: 'numeric',
-                                            minute: 'numeric',
+                                            hour: '2-digit',
+                                            minute: '2-digit',
                                         }).format(new Date(task.due_date))
                                         : "N/A"
                                     }
@@ -253,18 +284,42 @@ function App() {
                                             month: 'long',
                                             day: 'numeric',
                                             weekday: 'short',
-                                            hour: 'numeric',
-                                            minute: 'numeric',
+                                            hour: '2-digit',
+                                            minute: '2-digit',
                                         }).format(new Date(task.completed_time))
                                         : "N/A"
                                     }
                                 </td>
-                                <td className={`complete bold ${task.completed ? 'green' : 'red'}`}>
-                                    {task.completed ? (
-                                            <>完了<i class="fa-regular fa-square-check checkbox-icon"></i></> 
-                                        ) : (
-                                            <>未完了<i class="fa-regular fa-square checkbox-icon"></i></>
-                                        )
+                                {/* 完了差分 */}
+                                <td className={`date ${(task.due_date <= task.completed_time) ? 'red' : 'green'}`}>
+                                    {(task.completed_time && task.due_date) ?
+                                        (() => {
+                                            // due_date と completed_time の差を計算 (ミリ秒単位)
+                                            const dueDate = new Date(task.due_date);
+                                            const completedTime = new Date(task.completed_time);
+                                            
+                                            const dueMinutes = Math.floor(dueDate.getTime() / (1000 * 60)); // ミリ秒から分に変換
+                                            const completedMinutes = Math.floor(completedTime.getTime() / (1000 * 60)); // ミリ秒から分に変換
+                                            
+                                            // 差分を分単位で計算
+                                            const timeDiffInMinutes = dueMinutes - completedMinutes;
+
+                                            //1日以上
+                                            if (timeDiffInMinutes >= 1440) {
+                                                const timeDiffInDay = Math.floor(timeDiffInMinutes / 1440)
+                                                const timeDiffInHour = Math.floor(timeDiffInMinutes % 1440 / 60);
+                                                return `${timeDiffInDay}日${timeDiffInHour}時間`;
+                                            }
+
+                                            //1時間以上
+                                            if (timeDiffInMinutes >= 60) {
+                                                const timeDiffInHour = Math.floor(timeDiffInMinutes / 60);
+                                                return `${timeDiffInHour}時間${timeDiffInMinutes}分`;
+                                            }
+
+                                            return `${timeDiffInMinutes} 分`;
+                                        })()
+                                        : "N/A"
                                     }
                                 </td>
                                 <td className="button">

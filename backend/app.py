@@ -43,7 +43,7 @@ def get_tasks():
         "id": task.id,
         "title": task.title,
         "created_at": task.created_at.astimezone(japan_tz).isoformat(),
-        "due_date": task.due_date.astimezone(japan_tz).isoformat() if task.due_date else None,
+        "due_date": task.due_date.astimezone(japan_tz).isoformat(),
         "completed_time": task.completed_time.astimezone(japan_tz).isoformat() if task.completed_time else None,
         "completed": task.completed
     } for task in tasks])
@@ -55,7 +55,6 @@ def add_task():
     japan_tz = pytz.timezone('Asia/Tokyo')
     created_at_japan_time = datetime.now(japan_tz)
 
-    due_date = None
     if 'due_date' in data and data['due_date']:
         try:
             due_date = datetime.fromisoformat(data['due_date']).astimezone(japan_tz)
@@ -70,7 +69,7 @@ def add_task():
         "id": new_task.id,
         "title": new_task.title,
         "created_at": new_task.created_at.astimezone(japan_tz).isoformat(),
-        "due_date": new_task.due_date.astimezone(japan_tz).isoformat() if new_task.due_date else None,
+        "due_date": new_task.due_date.astimezone(japan_tz).isoformat(),
         "completed_time": new_task.completed_time.astimezone(japan_tz).isoformat() if new_task.completed_time else None,
         "completed": new_task.completed
     })
