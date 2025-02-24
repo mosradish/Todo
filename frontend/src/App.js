@@ -3,17 +3,30 @@ import './App.css';
 import axios from 'axios';
 import Header from './components/Header';
 import Footer from './components/Footer';
-import DatePicker from 'react-datepicker';
+import localizedFormat from "dayjs/plugin/localizedFormat";
+import weekday from "dayjs/plugin/weekday";
+import updateLocale from "dayjs/plugin/updateLocale";
+import { LocalizationProvider, DateTimePicker} from '@mui/x-date-pickers';
+import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
+import TextField from '@mui/material/TextField';
 import { format } from "date-fns";
 import { ja } from "date-fns/locale";
-import 'react-datepicker/dist/react-datepicker.css';
+import dayjs from 'dayjs'; // dayjs をインポート
+import 'dayjs/locale/ja';  // 日本語ロケールのインポート
+
+dayjs.extend(localizedFormat);
+dayjs.extend(weekday);
+dayjs.extend(updateLocale);
+dayjs.updateLocale("ja", {
+    weekdays: ["日", "月", "火", "水", "木", "金", "土"],
+});
 
 function App() {
     const [tasks, setTasks] = useState([]);
     const [taskTitle, setTaskTitle] = useState("");
     const [taskDate, setTaskDate] = useState(new Date());
     const [error, setError] = useState("");
-    const [selectedDate, setSelectedDate] = useState(new Date()); // selectedDate と setSelectedDate を定義
+    const [selectedDate, setSelectedDate] = useState(dayjs()); // selectedDate と setSelectedDate を定義
 
     // タスク一覧を取得
     useEffect(() => {
@@ -42,7 +55,7 @@ function App() {
         if (!taskTitle) return;
 
         // 期限が設定されている場合、ISO形式に変換
-        const dueDate = selectedDate ? selectedDate.toISOString() : null;
+        const dueDate = selectedDate instanceof Date && !isNaN(selectedDate) ? selectedDate.toISOString() : null;
 
         axios.post("http://127.0.0.1:5000/api/tasks", { 
             title: taskTitle,
@@ -57,10 +70,16 @@ function App() {
     };
 
     // タスクの完了状態を更新
-    const toggleTask = (id) => {
-        const currentTime = new Date().toISOString(); // 現在の時刻をISO形式で取得
-        axios.put(`http://127.0.0.1:5000/api/tasks/${id}`, { completed_time: currentTime })
-            .then(() => fetchTasks());
+    const toggleTask = (id, currentStatus) => {
+        const newStatus = !currentStatus; // 完了状態を切り替える
+        const currentTime = newStatus ? new Date().toISOString() : null; // 完了時間をセット
+    
+        axios.put(`http://127.0.0.1:5000/api/tasks/${id}`, {
+            completed: newStatus,
+            completed_time: currentTime
+        })
+        .then(() => fetchTasks()) // 更新後、タスク一覧を取得
+        .catch((error) => console.error("Error updating task:", error));
     };
 
     // タスクを削除
@@ -69,16 +88,13 @@ function App() {
             .then(() => fetchTasks());
     };
 
-    const formatDate = (date) => {
-        return format(date, "yyyy年M月d日(E) HH:mm", { locale: ja });
-    };
-
     // 完了タスクと未完了タスクを分ける
     const completedTasks = tasks.filter(task => task.completed);
     const pendingTasks = tasks.filter(task => !task.completed);
+    const formattedDate = selectedDate ? selectedDate.format("YYYY年M月D日 (dd) H時m分") : "";
 
     return (
-        <div>
+        <div className="app_container">
             <Header />
 
             <div className="main_wrapper">
@@ -86,31 +102,47 @@ function App() {
                 {/* 入力欄 */}
                 <div className="input_area">
                     <input
+                        className="task_title"
                         type="text"
                         value={taskTitle}
                         onChange={(e) => setTaskTitle(e.target.value)}
                         placeholder="新しいタスク"
                     />
-                    <DatePicker
-                        selected={selectedDate}
-                        onChange={(date) => setSelectedDate(date)}
-                        showTimeSelect
-                        dateFormat={selectedDate ? formatDate(selectedDate) : "未選択"}
-                        timeFormat="HH:mm"
-                        timeIntervals={5} // 5分単位で時間選択
-                        className="datepicker"
-                    />
-                    <button onClick={addTask} disabled={!taskTitle}>追加</button>
+                    <span className="limit">期限 : </span>
+                    <LocalizationProvider dateAdapter={AdapterDayjs}>
+                        {/* 日付と時間の両方を選択 */}
+                        <DateTimePicker
+                            label="日時を選択"
+                            value={dayjs(selectedDate).isValid() ? dayjs(selectedDate) : dayjs()} // selectedDate を確実に dayjs インスタンスに変換
+                            onChange={setSelectedDate}
+                            disablePast
+                            minutesStep={5}  // 5分刻み
+                            ampm={false}  // 24時間表示
+                            slotProps={{
+                                textField: {
+                                    value: formattedDate,  // フォーマット済みの日付を表示
+                                    onChange: (e) => {},  // 入力の変更を無視する（valueは変更されません）
+                                    inputProps: {
+                                        variant: "outlined",
+                                        margin: "normal",
+                                        size: "small",
+                                    },
+                                },
+                            }}
+                        />
+
+                    </LocalizationProvider>
+                    <button className="add" onClick={addTask} disabled={!taskTitle}>追加</button>
                 </div>
 
                 {/* error表示 */}
-                {error && <p className="error">{error}</p>}  {/* エラーメッセージ表示 */}
+                {error && <h2 className="error">{error}</h2>}  {/* エラーメッセージ表示 */}
 
                 <div className="hr"><hr></hr></div>
 
                 {/* 未完了タスク */}
                 <table className="tasklist">
-                    <caption>未完了タスク一覧</caption>
+                    <caption><span className="red">未完了<i class="fa-regular fa-square checkbox-icon"></i></span>タスク一覧</caption>
                     <thead>
                         <tr>
                             <th className="id">ID</th>
@@ -165,7 +197,7 @@ function App() {
                                     }
                                 </td>
                                 <td className="button">
-                                    <button onClick={() => toggleTask(task.id)}>
+                                <button onClick={() => toggleTask(task.id, task.completed)}>
                                         {task.completed ? "未完了にする" : "完了"}
                                     </button>
                                 </td>
@@ -182,7 +214,7 @@ function App() {
 
                 {/* 完了タスク */}
                 <table className="tasklist">
-                    <caption>完了済みタスク一覧</caption>
+                    <caption><span className="green">完了<i class="fa-regular fa-square-check checkbox-icon"></i></span>タスク一覧</caption>
                     <thead>
                         <tr>
                             <th className="id">ID</th>
@@ -239,7 +271,7 @@ function App() {
                                     }
                                 </td>
                                 <td className="button">
-                                    <button onClick={() => toggleTask(task.id)}>
+                                <button onClick={() => toggleTask(task.id, task.completed)}>
                                         {task.completed ? "未完了にする" : "完了"}
                                     </button>
                                 </td>

@@ -175,16 +175,70 @@ h5 {
 /* error */
 
 .error {
-  font-size: 2.4rem;
   font-weight: bold;
   color: red;
-  line-height: 1.5em;
+  line-height: 1em;
+  text-align: center;
+  opacity: 1; /* 初期状態は不透明 */
+  animation: fadeOut 5s forwards; /* 5秒かけてフェードアウト */
+}
+
+@keyframes fadeOut {
+    0% {
+        opacity: 1; /* 開始時は不透明 */
+    }
+    100% {
+        opacity: 0; /* 最後は透明 */
+    }
 }
 
 /************************************************/
-/* button design */
+/* app_container */
 
-button {
+.app_container {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh; /* ビューポートの高さいっぱいにする */
+}
+
+/************************************************/
+/* main_wrapper */
+
+.main_wrapper {
+  width: 80%;
+  margin: 15px 10%;
+  flex: 1;
+}
+
+/************************************************/
+/* input_area */
+
+.input_area {
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  width: 100%;
+}
+
+.input_area input {
+  height: 30px;
+}
+
+.input_area .task_title {
+  width: 50%;
+}
+
+.input_area .limit {
+  font-size: 1.8rem;
+  font-weight: bold;
+}
+
+.input_area button.add{
+  min-width: 100px;
+  height: 30px;
+}
+
+.input_area button.add {
   transform: translateY(-2.5px);
   background-color: var(--button-bg-color);
   color: white;
@@ -194,14 +248,14 @@ button {
   transition: transform 0.1s ease, border-bottom 0.1s ease, background-color 0.2s ease;
 }
 
-button:hover {
+.input_area button.add:hover {
   cursor: pointer;
   transform: translateY(0.5px);  /* ボタンが押されるような効果 */
   background-color: var(--button-bg-hover-color);
   border-bottom: 2px var(--button-shadow-color) solid; /* 押したときに影を浅くする */
 }
 
-button:disabled {
+.input_area button:disabled {
   transform: none;
   background-color: gray;
   color: black;
@@ -209,44 +263,16 @@ button:disabled {
   cursor: not-allowed;
 }
 
-button:disabled:hover {
+.input_area button:disabled:hover {
   transform: none;  /* 無効状態では押すエフェクトを無効化 */
   background-color: gray;
   border-bottom: none;
 }
 
-
-/************************************************/
-/* main_wrapper */
-
-.main_wrapper {
-  width: 80%;
-  margin: 15px 10%;
-}
-
-/************************************************/
-/* input_area */
-
-.input_area {
-  width: 100%;
-  height: 30px;
-  margin: 30px auto;
-}
-
-.input_area input {
-  width: 50%;
-  height: 30px;
-  margin-right: 15px;
-}
-
-.input_area .datepicker {
-  width: 170px;
-  text-align: center;
-}
-
-.input_area button {
-  padding: 0 15px;
-  width: 100px;
+.MuiTextField-root.MuiFormControl-root .MuiOutlinedInput-root {
+  background-color: white;
+  font-size: 1.6rem;
+  width: 300px;
   height: 30px;
 }
 
@@ -291,6 +317,20 @@ button:disabled:hover {
 .tasklist button {
   width: 100px;
   height: 30px;
+  transform: translateY(-2.5px);
+  background-color: var(--button-bg-color);
+  color: white;
+  border: var(--button-boreder-color) 1px solid;
+  border-bottom: 5px var(--button-shadow-color) solid;
+  border-radius: 15px;
+  transition: transform 0.1s ease, border-bottom 0.1s ease, background-color 0.2s ease;
+}
+
+.tasklist button:hover {
+  cursor: pointer;
+  transform: translateY(0.5px);  /* ボタンが押されるような効果 */
+  background-color: var(--button-bg-hover-color);
+  border-bottom: 2px var(--button-shadow-color) solid; /* 押したときに影を浅くする */
 }
 
 .tasklist tbody .id,
