@@ -53,6 +53,7 @@
   --button-bg-hover-color: #FFB522;
   --button-boreder-color: #FFE5B1;
   --hr-color: #FFE5B1;
+  --form-bg-color: #FFE5B1;
   --main-font: "メイリオ", "Meiryo", "MS Pゴシック", "Hiragino Kaku Gothic Pro", "ヒラギノ角ゴ Pro W3", sans-serif;
 }
 
@@ -143,6 +144,10 @@ h2 {
   position: relative;
 }
 
+h2.title {
+  text-align: center;
+}
+
 h3 {
   text-align: left;
   width: 100%;
@@ -205,8 +210,8 @@ h5 {
 /* main_wrapper */
 
 .main_wrapper {
-  width: 80%;
-  margin: 15px 10%;
+  width: 90%;
+  margin: 15px 5%;
   flex: 1;
 }
 
@@ -297,6 +302,11 @@ h5 {
   margin: auto;
 }
 
+.tasklist th {
+  font-weight: bold;
+  text-align: center;
+}
+
 .tasklist th,
 .tasklist td {
   height: 35px;
@@ -304,6 +314,13 @@ h5 {
 
 .tasklist .id {
   width: 15px;
+}
+
+.tasklist tbody .title {
+  min-width: 100px;
+  display: flex;
+  justify-content: space-between;
+  padding: 0 30px;
 }
 
 .tasklist .date {
@@ -358,6 +375,116 @@ h5 {
   color: gray;
   text-decoration: line-through;
   text-decoration-color: red;
+}
+
+/************************************************/
+/* register */
+
+.register_form {
+  display: flex;
+  max-width: 800px;
+  margin: 30px auto;
+  padding : 30px;
+  flex-wrap: wrap;
+  background-color: var(--form-bg-color);
+  border-radius: 50px;
+}
+
+.register_form input {
+  width: 80%;
+  height: 30px;
+  margin: 15px 10%;
+}
+
+
+.register_form label {
+  width: 100%;
+  font-size: 2.4rem;
+  font-weight: bold;
+  text-align: center;
+  margin: 15px auto;
+}
+
+.register_form input::placeholder {
+  text-align: center;
+  font-size: 1.6rem;
+}
+
+.register_form button {
+  width: 150px;
+  height: 50px;
+  margin: 15px auto;
+  font-size: 2.4rem;
+  font-weight: bold;
+  transform: translateY(-2.5px);
+  background-color: var(--button-bg-color);
+  color: white;
+  border: var(--button-boreder-color) 1px solid;
+  border-bottom: 5px var(--button-shadow-color) solid;
+  border-radius: 15px;
+  transition: transform 0.1s ease, border-bottom 0.1s ease, background-color 0.2s ease;
+}
+
+.register_form button:hover {
+  cursor: pointer;
+  transform: translateY(0.5px);  /* ボタンが押されるような効果 */
+  background-color: var(--button-bg-hover-color);
+  border-bottom: 2px var(--button-shadow-color) solid; /* 押したときに影を浅くする */
+}
+
+/************************************************/
+/* login */
+
+.login_form {
+  display: flex;
+  max-width: 800px;
+  margin: 30px auto;
+  padding : 30px;
+  flex-wrap: wrap;
+  background-color: var(--form-bg-color);
+  border-radius: 50px;
+}
+
+.login_form input {
+  width: 80%;
+  height: 30px;
+  margin: 15px 10%;
+}
+
+
+.login_form label {
+  width: 100%;
+  font-size: 2.4rem;
+  font-weight: bold;
+  text-align: center;
+  margin: 15px auto;
+}
+
+.login_form input::placeholder {
+  text-align: center;
+  font-size: 1.6rem;
+}
+
+.login_form button {
+  width: 150px;
+  height: 50px;
+  margin: 15px auto;
+  font-size: 2.4rem;
+  font-weight: bold;
+  transform: translateY(-2.5px);
+  background-color: var(--button-bg-color);
+  color: white;
+  border: var(--button-boreder-color) 1px solid;
+  border-bottom: 5px var(--button-shadow-color) solid;
+  border-radius: 15px;
+  transition: transform 0.1s ease, border-bottom 0.1s ease, background-color 0.2s ease;
+}
+
+.login_form button:hover {
+  cursor: pointer;
+  transform: translateY(0.5px);  /* ボタンが押されるような効果 */
+  background-color: var(--button-bg-hover-color);
+  border-bottom: 2px var(--button-shadow-color) solid; /* 押したときに影を浅くする */
 }
 
 /************************************************/

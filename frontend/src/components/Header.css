@@ -6,10 +6,14 @@ header {
     color: black;
 }
 
+
 .title_nav {
+    height: 1.5em;
+    line-height: 1.5em;
     background-color: var(--nav-bg-color);
     display: flex;
     justify-content: space-around;
+    font-size: 2.2rem;
 }
 
 .header_title {
