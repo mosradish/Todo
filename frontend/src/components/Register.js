@@ -1,9 +1,11 @@
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 
 const Register =({ onRegister, setError }) => {
     const [name, setName] = useState("");
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
+    const navigate = useNavigate();
 
     const handleSubmit = async (e) => {
         e.preventDefault();
@@ -17,8 +19,9 @@ const Register =({ onRegister, setError }) => {
 
             if (response.ok) {
                 onRegister(data.token); // 親コンポーネントにトークンを渡す（自動ログイン）
+                navigate("/");
             } else {
-                setError(`登録失敗: ${data.message}`); // setError を使ってエラーメッセージを表示
+                setError(`登録失敗: ${data.message}`);
             }
         } catch (error) {
             setError("ネットワークエラーが発生しました");

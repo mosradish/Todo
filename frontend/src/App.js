@@ -1,15 +1,11 @@
-import React, { useEffect, useState, useRef } from 'react';
+import React, { useEffect, useState } from 'react';
 import './App.css';
-import axios from 'axios';
 import Header from './components/Header';
 import Footer from './components/Footer';
 import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
 import TodoList from "./components/TodoList";
 import Register from "./components/Register";
 import Login from "./components/Login";
-
-
-
 
 function App() {
 
@@ -41,7 +37,7 @@ function App() {
                     </div>
                 <Footer />
             </div>
-        </ Router>
+        </Router>
     )
 }
 
