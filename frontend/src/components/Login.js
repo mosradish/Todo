@@ -1,4 +1,4 @@
-import { useState } from "react";
+import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 
 const Login = ({ setError, setUser }) => {
@@ -14,15 +14,28 @@ const Login = ({ setError, setUser }) => {
                     "Content-Type": "application/json",
                     "Authorization": `Bearer ${token}`,
                 },
+                credentials: "include",
             });
+    
             if (response.ok) {
                 const userData = await response.json();
+    
+                // JWT トークンをデコードして name を取得
+                const payload = JSON.parse(atob(token.split(".")[1])); 
+                userData.name = payload.name; // `name` を追加
+    
+                console.log("取得したユーザーデータ:", userData);
+                // ローカルストレージに保存
+                localStorage.setItem("user", JSON.stringify(userData));
                 setUser(userData);
+            } else {
+                console.error("ユーザーデータの取得に失敗");
             }
         } catch (error) {
-            console.error("ユーザー情報の取得に失敗:", error);
+            console.error("エラー:", error);
         }
     };
+    
 
     const handleSubmit = async (e) => {
         e.preventDefault();
@@ -33,6 +46,7 @@ const Login = ({ setError, setUser }) => {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({ email, password }),
+                credentials: 'include'
             });
 
             const data = await response.json();
@@ -43,11 +57,9 @@ const Login = ({ setError, setUser }) => {
                 navigate("/");
             } else {
                 setError(`ログイン失敗: ${data.message}`);
-                navigate("/login");
             }
         } catch (error) {
-            setError("エラー : " + error);
-            navigate("/login");
+            setError(`エラー: ${error.message || String(error)}`);
         }
     };
 
@@ -58,15 +70,17 @@ const Login = ({ setError, setUser }) => {
                 <label htmlFor="email">メールアドレス</label>
                 <input
                     type="email"
+                    id="email"
                     placeholder="メールアドレス"
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
                     required
                 />
 
-                <label htmlFor="name">パスワード</label>
+                <label htmlFor="password">パスワード</label>
                 <input
                     type="password"
+                    id="password"
                     placeholder="パスワード"
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}

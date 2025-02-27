@@ -5,29 +5,27 @@ from flask_migrate import Migrate
 from datetime import datetime
 import os
 import pytz
-from flask_jwt_extended import create_access_token, JWTManager, jwt_required, get_jwt_identity
+from flask_jwt_extended import create_access_token, JWTManager, jwt_required, get_jwt_identity, get_jwt
 from werkzeug.security import generate_password_hash, check_password_hash
+from dotenv import load_dotenv
+
+
+# .env の読み込み
+load_dotenv()
 
 app = Flask(__name__)
 
 tasks = []
 
 # ReactとFlaskの通信を許可
-CORS(app, 
-    supports_credentials=True,
-    resources={
-        r"/*": {
-            "origins": ["http://localhost:5173"],  # Viteのデフォルトポート
-            "methods": ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
-            "allow_headers": ["Content-Type", "Authorization"]
-        }
-    })
+CORS(app, supports_credentials=True)
 
 # 環境変数 DATABASE_URL が設定されていなければ、SQLite を使用
 app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get('DATABASE_URL', 'sqlite:///app.db')
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
-app.config["JWT_SECRET_KEY"] = os.urandom(24)
-app.config['SECRET_KEY'] = os.urandom(24)
+app.config['SECRET_KEY'] = os.getenv("FLASK_SECRET_KEY")
+app.config["JWT_SECRET_KEY"] = os.getenv("JWT_SECRET_KEY")
+app.config['JWT_BLACKLIST_ENABLED'] = True  # ブラックリスト機能を有効にする
 
 jwt = JWTManager(app)
 db = SQLAlchemy(app)
@@ -68,7 +66,7 @@ def get_tasks():
     japan_tz = pytz.timezone('Asia/Tokyo')
 
     return jsonify([{
-        "id": task.task_id,
+        "id": task.id,
         "user_id": task.user_id,
         "title": task.title,
         "created_at": task.created_at.astimezone(japan_tz).isoformat(),
@@ -79,16 +77,18 @@ def get_tasks():
 
 # タスクを追加
 @app.route('/api/tasks', methods=['POST'])
+@jwt_required()  # JWT認証を要求
 def add_task():
     data = request.json
     japan_tz = pytz.timezone('Asia/Tokyo')
     created_at_japan_time = datetime.now(japan_tz)
 
-    # user_idの取得とバリデーション
-    if 'user_id' not in data or not data['user_id']:
-        return jsonify({"message": "user_id is required"}), 400
+    # 現在ログインしているユーザーの user_id を取得
+    user_id = get_jwt_identity()  # JWTトークンからユーザーIDを取得
 
-    user_id = data['user_id']
+    # user_id が取得できていない場合のチェック（通常は必要ないが、セキュリティ強化のために確認）
+    if not user_id:
+        return jsonify({"message": "User not authenticated"}), 401
 
     # due_date の処理
     due_date = None
@@ -100,18 +100,18 @@ def add_task():
 
     # タスクの作成
     new_task = Task(
-        user_id=user_id,
+        user_id=1,  # 認証されたユーザーの user_id を使用
         title=data['title'],
         completed=False,
         created_at=created_at_japan_time,
         due_date=due_date
     )
-    
+
     db.session.add(new_task)
     db.session.commit()
 
     return jsonify({
-        "id": new_task.task_id,
+        "id": new_task.id,
         "user_id": new_task.user_id,
         "title": new_task.title,
         "created_at": new_task.created_at.astimezone(japan_tz).isoformat(),
@@ -140,7 +140,7 @@ def update_task(id):
     db.session.commit()
 
     return jsonify({
-        "id": task.task_id,
+        "id": task.id,
         "user_id": task.user_id,
         "title": task.title,
         "created_at": task.created_at.astimezone(japan_tz).isoformat(),
@@ -150,9 +150,9 @@ def update_task(id):
     }), 200
 
 # タスクの期限を更新
-@app.route('/api/tasks/<int:task_id>/due_date', methods=['PUT'])
-def update_due_date(task_id):
-    task = Task.query.get(task_id)
+@app.route('/api/tasks/<int:id>/due_date', methods=['PUT'])
+def update_due_date(id):
+    task = Task.query.get(id)
     if not task:
         return jsonify({"message": "Task not found"}), 404
 
@@ -170,9 +170,9 @@ def update_due_date(task_id):
     return jsonify({"message": "Due date updated!"})
 
 # タスクを削除
-@app.route('/api/tasks/<int:task_id>', methods=['DELETE'])
-def delete_task(task_id):
-    task = Task.query.get(task_id)
+@app.route('/api/tasks/<int:id>', methods=['DELETE'])
+def delete_task(id):
+    task = Task.query.get(id)
     if not task:
         return jsonify({"message": "Task not found"}), 404
     db.session.delete(task)
@@ -219,42 +219,70 @@ def register():
 @app.route('/api/user', methods=['GET'])
 @jwt_required()
 def get_user():
-    try:
-        current_user_email = get_jwt_identity()
-        user = User.query.filter_by(email=current_user_email).first()
-        if user:
-            return jsonify({
-                "id": user.id,
-                "name": user.name,
-                "email": user.email
-            }), 200
-        return jsonify({"message": "User not found"}), 404
-    except Exception as e:
-        return jsonify({"message": "Token validation failed", "error": str(e)}), 401
+    print("JWTの中身:", get_jwt())  # JWTのペイロードをログ出力
+    user_id = get_jwt_identity()
+
+    if isinstance(user_id, str):
+        try:
+            user_id = int(user_id)
+        except ValueError:
+            return jsonify({"message": "無効なユーザーID"}), 400
+
+    user = User.query.get(user_id)
+
+    if not user:
+        return jsonify({"message": "ユーザーが見つかりません"}), 404
+
+    return jsonify({"user_id": user.id, "user_name": user.name})
 
 #ログイン処理
 @app.route('/login', methods=['POST'])
 def login():
-    data = request.json  # JSONデータとして受け取る
-    email = data.get('email')
-    password = data.get('password')
-    user = User.query.filter_by(email=email).first()
+    data = request.json
+    user = User.query.filter_by(email=data["email"]).first()
 
-    if user and check_password_hash(user.password, password):
-        session['user_id'] = user.id  # ユーザーIDをセッションに保存
-        session['user_name'] = user.name  # ユーザー名をセッションに保存
-        token = create_access_token(identity=email)  # JWTトークンを作成
-        return jsonify({"message": "ログイン成功", "token": token, "user_id": user.id}), 200
+    if not user or not check_password_hash(user.password, data["password"]):
+        return jsonify({"message": "認証失敗"}), 401
 
-    return jsonify({"message": "メールアドレスまたはパスワードが間違っています"}), 401
+    # IDを文字列に変換してトークンを発行
+    access_token = create_access_token(
+        identity=(user.id),
+        additional_claims = {"name": user.name}
+    )
 
-# ログアウト処理
-@app.route('/logout')
+    return jsonify({"token": access_token})
+
+
+# ブラックリスト用のテーブル
+class TokenBlacklist(db.Model):
+    __tablename__ = 'token_blacklist'
+    id = db.Column(db.Integer, primary_key=True)
+    token = db.Column(db.String(512), nullable=False)
+
+# JWTのブラックリスト化を管理するためのコールバック
+# トークンがブロックリストにあるかを確認するためのロード関数を定義
+@jwt.token_in_blocklist_loader
+def check_if_token_in_blacklist(jwt_header, jwt_payload):
+    # トークンがブラックリストにあるか確認
+    token = jwt_header.get('Authorization').split()[1]  # "Bearer <token>"からトークン部分を取得
+    blacklisted_token = TokenBlacklist.query.filter_by(token=token).first()
+
+    # ブラックリストにトークンがあればTrueを返す
+    return blacklisted_token is not None
+
+# ログアウト時にトークンをブラックリストに追加
+@app.route('/logout', methods=['POST'])
+@jwt_required()
 def logout():
-    # セッションをクリア
-    session.clear()
-    # ホームページにリダイレクト
-    return redirect('/')  # 直接ルートパスを指定
+    jti = get_jwt_identity()  # JWTのIDを取得
+    token = request.headers.get('Authorization').split()[1]  # ヘッダーからトークンを取得
+
+    # トークンをブラックリストに追加
+    blacklisted_token = TokenBlacklist(token=token)
+    db.session.add(blacklisted_token)
+    db.session.commit()
+
+    return jsonify({"message": "Successfully logged out"}), 200
 
 if __name__ == '__main__':
     app.run()
