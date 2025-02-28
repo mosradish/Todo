@@ -42,10 +42,27 @@ const TodoList = () => {
         fetchTasks();
     }, []);
 
-    const fetchTasks = () => {
-        axios.get("http://127.0.0.1:5000/api/tasks")
-            .then(response => setTasks(response.data))
-            .catch(error => setError("タスクの取得中にエラーが発生しました"));
+    const fetchTasks = async () => {
+        const token = localStorage.getItem('token'); // 保存されたJWTトークンを取得
+    
+        try {
+            const response = await fetch('http://127.0.0.1:5000/api/tasks', {
+                method: 'GET',
+                headers: {
+                    'Authorization': `Bearer ${token}`, // トークンをヘッダーに追加
+                    'Content-Type': 'application/json',
+                },
+            });
+    
+            if (!response.ok) {
+                throw new Error('Failed to fetch tasks');
+            }
+            
+            const data = await response.json();
+            console.log(data);
+        } catch (error) {
+            console.error(error);
+        }
     };
 
     const [error, setError] = useState("");

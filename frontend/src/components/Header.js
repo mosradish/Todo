@@ -7,31 +7,8 @@ const Header = ({ setUser }) => {
     const navigate = useNavigate();
 
     const handleLogout = () => {
-        // localStorageからJWTトークンを削除
-        localStorage.removeItem("jwt_token");
-        localStorage.removeItem("user");
-    
-        // ユーザー状態をクリア
-        setUser(null);
-    
-        // バックエンドにログアウト処理をリクエスト
-        fetch('http://127.0.0.1:5000/logout', {
-            method: 'POST', // 通常、ログアウトはPOSTリクエストで行う
-            headers: {
-                'Content-Type': 'application/json',
-                'Authorization': `Bearer ${localStorage.getItem("jwt_token")}` // 必要に応じてトークンをヘッダーに追加
-            },
-            credentials: 'include' // サーバー側でセッションを無効にするために必要
-        })
-        .then(() => {
-            // ログアウト後、ホームページに遷移
-            navigate('/');
-        })
-        .catch(error => {
-            console.error('ログアウトエラー:', error);
-            // エラーが発生してもホームページに遷移
-            navigate('/');
-        });
+        localStorage.removeItem("token"); // トークンを削除
+        navigate("/login"); // ログイン画面へリダイレクト
     };
 
     useEffect(() => {

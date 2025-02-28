@@ -17,7 +17,7 @@ function App() {
         if (error) {
             const timer = setTimeout(() => {
                 setError(""); // エラーメッセージを消す
-            }, 5000); // 5000ms（5秒）後にエラーメッセージを消す
+            }, 10000); // 10000ms（10秒）後にエラーメッセージを消す
 
             return () => clearTimeout(timer); // コンポーネントのアンマウント時にタイマーをクリア
         }
@@ -27,7 +27,11 @@ function App() {
     useEffect(() => {
         const storedUser = localStorage.getItem("user");
         if (storedUser) {
-            setUser(JSON.parse(storedUser));  // JSONをオブジェクトに変換
+            try {
+                setUser(JSON.parse(storedUser));  // JSONをオブジェクトに変換
+            } catch (error) {
+                console.error("Failed to parse user data from localStorage", error);
+            }
         }
     }, []);
 
