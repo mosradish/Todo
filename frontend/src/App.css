@@ -88,6 +88,10 @@ body {
   font-family: var(--main-font);
 }
 
+button {
+  font-family: var(--main-font);
+}
+
 img {
   border : 0px none;
 }
@@ -195,6 +199,18 @@ h5 {
     100% {
         opacity: 0; /* 最後は透明 */
     }
+}
+
+/************************************************/
+/* flash */
+
+.flash {
+  font-weight: bold;
+  color: orange;
+  line-height: 1em;
+  text-align: center;
+  opacity: 1; /* 初期状態は不透明 */
+  animation: fadeOut 5s forwards; /* 5秒かけてフェードアウト */
 }
 
 /************************************************/

@@ -1,5 +1,4 @@
 from flask import Blueprint, request, jsonify
-from werkzeug.security import generate_password_hash
 from models import User, db
 
 register_bp = Blueprint('register', __name__)
@@ -7,22 +6,22 @@ register_bp = Blueprint('register', __name__)
 @register_bp.route('/register', methods=['POST'])
 def register():
     data = request.json
+    
     name = data.get('name')
     email = data.get('email')
     password = data.get('password')
 
-    if not email or not password:
-        return jsonify({"message": "email and password are required"}), 400
+    if not name or not email or not password:
+        return jsonify({"message": "全てのフィールドを入力してください。"}), 400
 
     # 既存ユーザーのチェック
     if User.query.filter_by(email=email).first():
-        return jsonify({"message": "email already exists"}), 409
+        return jsonify({"message": "既に登録されたメールアドレスです。"}), 409
 
-    # パスワードをハッシュ化して保存
-    hashed_password = generate_password_hash(password, method='pbkdf2:sha256')
-
-    new_user = User(name=name, email=email, password=hashed_password)
+    # 新しいユーザーの作成
+    new_user = User(name=name, email=email)
+    new_user.set_password(password)  # bcrypt でハッシュ化
     db.session.add(new_user)
     db.session.commit()
 
-    return jsonify({"message": "User registered successfully"}), 201
+    return jsonify({"message": "ユーザー登録に成功しました。"}), 201

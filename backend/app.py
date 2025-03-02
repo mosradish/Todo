@@ -19,13 +19,13 @@ load_dotenv()
 app = Flask(__name__)
 tasks = []
 # ReactとFlaskの通信を許可
-CORS(app, supports_credentials=True)
+CORS(app, resources={r"/*": {"origins": "http://localhost:3000"}}, supports_credentials=True)
 
 # 環境変数 DATABASE_URL が設定されていなければ、SQLite を使用
 app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get('DATABASE_URL', 'sqlite:///app.db')
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
-app.config['SECRET_KEY'] = os.getenv("FLASK_SECRET_KEY")
-app.config["JWT_SECRET_KEY"] = os.getenv("JWT_SECRET_KEY")
+app.config['SECRET_KEY'] = os.getenv("FLASK_SECRET_KEY", "default_secret_key")
+app.config["JWT_SECRET_KEY"] = os.getenv("JWT_SECRET_KEY", "default_secret_key")
 
 jwt = JWTManager(app)
 migrate = Migrate(app, db)

@@ -33,9 +33,8 @@ const TodoList = () => {
 
     const [tasks, setTasks] = useState([]);
     const [taskTitle, setTaskTitle] = useState("");
-    const [taskDate, setTaskDate] = useState(new dayjs());
     const [selectedDate, setSelectedDate] = useState(dayjs());
-    const [inputValue, setInputValue] = useState(selectedDate.format('YYYY年M月D日 H時m分'));
+    const [inputValue, setInputValue] = useState(selectedDate.format('YYYY年MM月DD日 HH時mm分'));
 
     // タスク一覧を取得
     useEffect(() => {
@@ -43,27 +42,35 @@ const TodoList = () => {
     }, []);
 
     const fetchTasks = async () => {
-        const token = localStorage.getItem('token'); // 保存されたJWTトークンを取得
+        const token = localStorage.getItem('jwt_token');
+    
+        if (!token) {
+            console.error("JWTトークンが存在しません");
+            return;
+        }
     
         try {
             const response = await fetch('http://127.0.0.1:5000/api/tasks', {
                 method: 'GET',
                 headers: {
-                    'Authorization': `Bearer ${token}`, // トークンをヘッダーに追加
                     'Content-Type': 'application/json',
+                    "Authorization": `Bearer ${token}`
                 },
             });
     
             if (!response.ok) {
-                throw new Error('Failed to fetch tasks');
+                throw new Error(`タスクの取得に失敗: ${response.status} ${response.statusText}`);
             }
-            
+    
             const data = await response.json();
-            console.log(data);
+            console.log("取得したタスク:", data);
+            setTasks(data);
         } catch (error) {
             console.error(error);
         }
     };
+    
+    
 
     const [error, setError] = useState("");
 
@@ -78,30 +85,44 @@ const TodoList = () => {
         }
     }, [error]); // エラーが更新されるたびに実行される
 
-    // タスクを追加
-    const addTask = () => {
-        if (!taskTitle) return;
 
-        // 期限が設定されている場合、ISO形式に変換
-        const japanTz = "Asia/Tokyo"; // タイムゾーン指定
-        const dueDate = dayjs(selectedDate).tz(japanTz).format(); // ISO 8601 形式
-
-        axios.post("http://127.0.0.1:5000/api/tasks", {
-            title: taskTitle,
-            due_date: dueDate, // due_dateをサーバーに渡す
-        })
-
-        .then((response) => {
-            setTasks((prevTasks) => [...prevTasks, response.data]); // 新しいタスクを追加
-            setTaskTitle(""); // タスクタイトルをリセット
-            setTaskDate(new dayjs()); // 日付をリセット
-        })
-        .catch(error => {
+    //タスク追加
+    const addTask = async () => {
+        if (!taskTitle) {
+            setError("タスクのタイトルを入力してください");
+            return;
+        }
+    
+        const token = localStorage.getItem('jwt_token');
+        if (!token) {
+            setError("JWTトークンが存在しません");
+            return;
+        }
+    
+        const dueDate = selectedDate ? dayjs(selectedDate).tz("Asia/Tokyo").toISOString() : null;
+    
+        try {
+            console.log("送信データ:", { title: taskTitle, due_date: dueDate });
+    
+            const response = await axios.post("http://127.0.0.1:5000/api/tasks", {
+                title: taskTitle,
+                due_date: dueDate,
+            }, {
+                headers: {
+                    "Content-Type": "application/json",
+                    "Authorization": `Bearer ${token}`
+                }
+            });
+    
+            console.log("タスク追加成功:", response.data);
+            setTasks((prevTasks) => [...prevTasks, response.data]);
+            setTaskTitle("");
+            setSelectedDate(dayjs());
+        } catch (error) {
             setError("タスクの追加中にエラーが発生しました");
-            console.error(error);
-        });
-
-    };
+            console.error("タスク追加エラー:", error.response?.data || error.message);
+        }
+    };    
 
 
     // タスクの完了状態を更新
@@ -119,8 +140,13 @@ const TodoList = () => {
 
     // タスクを削除
     const deleteTask = (id) => {
-        axios.delete(`http://127.0.0.1:5000/api/tasks/${id}`)
-            .then(() => fetchTasks());
+        const token = localStorage.getItem('jwt_token');
+    
+        axios.delete(`http://127.0.0.1:5000/api/tasks/${id}`, {
+            headers: { "Authorization": `Bearer ${token}` }
+        })
+        .then(() => fetchTasks())
+        .catch(error => console.error("削除エラー:", error));
     };
 
     // 完了タスクと未完了タスクを分ける

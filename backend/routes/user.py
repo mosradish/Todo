@@ -12,12 +12,6 @@ def get_user():
     print("JWTの中身:", get_jwt())  # JWTのペイロードをログ出力
     user_id = get_jwt_identity()
 
-    if isinstance(user_id, str):
-        try:
-            user_id = int(user_id)
-        except ValueError:
-            return jsonify({"message": "無効なユーザーID"}), 400
-
     user = User.query.get(user_id)
 
     if not user:

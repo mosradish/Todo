@@ -6,7 +6,6 @@ header {
     color: black;
 }
 
-
 .title_nav {
     height: 1.5em;
     line-height: 1.5em;
@@ -21,4 +20,18 @@ header {
     width: 100%;
     font-size: 3.2rem;
     margin: auto;
+}
+
+.logout_button {
+    font-size: 2.2rem;
+    background: none;
+    border: none;
+    color: #336699;
+    text-decoration: none;
+    cursor: pointer;
+}
+
+.logout_button:hover {
+color: #6195CA;
+text-decoration : underline;
 }
