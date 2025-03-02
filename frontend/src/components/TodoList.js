@@ -50,7 +50,9 @@ const TodoList = () => {
         }
     
         try {
-            const response = await fetch('http://127.0.0.1:5000/api/tasks', {
+            console.log("送信するJWTトークン:", token);  // 🔥 デバッグ用ログ
+    
+            const response = await fetch('http://127.0.0.1:5000/api/tasks', {  // 👈 `/api/tasks` に修正
                 method: 'GET',
                 headers: {
                     'Content-Type': 'application/json',
@@ -59,7 +61,8 @@ const TodoList = () => {
             });
     
             if (!response.ok) {
-                throw new Error(`タスクの取得に失敗: ${response.status} ${response.statusText}`);
+                const errorData = await response.json();
+                throw new Error(`タスクの取得に失敗: ${response.status} ${errorData.message || response.statusText}`);
             }
     
             const data = await response.json();
@@ -69,6 +72,8 @@ const TodoList = () => {
             console.error(error);
         }
     };
+    
+
     
     
 
@@ -100,14 +105,15 @@ const TodoList = () => {
         }
     
         const dueDate = selectedDate ? dayjs(selectedDate).tz("Asia/Tokyo").toISOString() : null;
+        const requestData = {
+            title: taskTitle,
+            due_date: dueDate
+        };
+    
+        console.log("送信データ:", JSON.stringify(requestData));  // 🔥 デバッグ用
     
         try {
-            console.log("送信データ:", { title: taskTitle, due_date: dueDate });
-    
-            const response = await axios.post("http://127.0.0.1:5000/api/tasks", {
-                title: taskTitle,
-                due_date: dueDate,
-            }, {
+            const response = await axios.post("http://127.0.0.1:5000/api/tasks", requestData, {
                 headers: {
                     "Content-Type": "application/json",
                     "Authorization": `Bearer ${token}`
@@ -122,7 +128,8 @@ const TodoList = () => {
             setError("タスクの追加中にエラーが発生しました");
             console.error("タスク追加エラー:", error.response?.data || error.message);
         }
-    };    
+    };
+    
 
 
     // タスクの完了状態を更新
