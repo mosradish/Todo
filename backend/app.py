@@ -40,7 +40,7 @@ app.register_blueprint(task_bp, url_prefix='/api')
 app.register_blueprint(user_bp, url_prefix='/api')
 
 @app.route('/')
-def serve():
+def serve_react():
     return send_from_directory(os.path.join(app.root_path, 'frontend/build'), 'index.html')
 
 if __name__ == '__main__':
