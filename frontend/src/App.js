@@ -42,7 +42,9 @@ function App() {
         }
     }, []);
 
+    // ログアウト処理
     const handleLogout = () => {
+        localStorage.removeItem("jwt_token");
         localStorage.removeItem("user");
         setUser(null);
     };
@@ -55,9 +57,9 @@ function App() {
                     {error && <h2 className="error">{error}</h2>}
                     <Routes>
                         <Route path="/" element={<Home />} />
-                        <Route path="/register" element={<Register setError={setError} />} />
+                        <Route path="/register" element={<Register setError={setError} setUser={setUser} />} />
                         <Route path="/login" element={<Login setError={setError} setUser={setUser} />} />
-                        <Route path="/logout" element={<Navigate to="/" replace />} onEnter={handleLogout} />
+                        <Route path="/logout" element={<Navigate to="/" replace />} />
                     </Routes>
                 </div>
                 <Footer />

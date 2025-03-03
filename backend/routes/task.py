@@ -41,7 +41,6 @@ def get_tasks():
         return jsonify({"message": f"サーバーエラー: {str(e)}"}), 500
 
 
-
 # タスクを追加
 @task_bp.route('/tasks', methods=['POST'])
 @jwt_required()
@@ -103,31 +102,36 @@ def add_task():
 @task_bp.route('/tasks/<int:id>', methods=['PUT'])
 @jwt_required()
 def update_task(id):
-    task = Task.query.get(id)
-    if not task:
-        return jsonify({"error": "Task not found"}), 404
+    try:
+        task = Task.query.get(id)
+        if not task:
+            return jsonify({"error": "Task not found"}), 404
 
-    data = request.get_json()
+        data = request.get_json()
 
-    # タスクの完了状態を更新
-    if 'completed' in data:
-        task.completed = data['completed']
-        if task.completed:
-            task.completed_time = datetime.now(japan_tz)  # 🎯 完了時間を保存
-        else:
-            task.completed_time = None  # 🎯 未完了に戻した場合、完了時間をリセット
+        # タスクの完了状態を更新
+        if 'completed' in data:
+            task.completed = data['completed']
+            if task.completed:
+                task.completed_time = datetime.now(japan_tz)  # 🎯 完了時間を保存
+            else:
+                task.completed_time = None  # 🎯 未完了に戻した場合、完了時間をリセット
 
-    db.session.commit()
+        db.session.commit()  # 変更を確実に保存 🔥
 
-    return jsonify({
-        "id": task.id,
-        "user_id": task.user_id,
-        "title": task.title,
-        "created_at": task.created_at.astimezone(japan_tz).isoformat(),
-        "due_date": task.due_date.astimezone(japan_tz).isoformat() if task.due_date else None,
-        "completed_time": task.completed_time.astimezone(japan_tz).isoformat() if task.completed_time else None,
-        "completed": task.completed
-    }), 200
+        return jsonify({
+            "id": task.id,
+            "user_id": task.user_id,
+            "title": task.title,
+            "created_at": task.created_at.astimezone(japan_tz).isoformat(),
+            "due_date": task.due_date.astimezone(japan_tz).isoformat() if task.due_date else None,
+            "completed_time": task.completed_time.astimezone(japan_tz).isoformat() if task.completed_time else None,
+            "completed": task.completed
+        }), 200
+
+    except Exception as e:
+        print(f"エラー発生: {str(e)}")
+        return jsonify({"message": f"サーバーエラー: {str(e)}"}), 500
 
 
 # タスクの期限を更新

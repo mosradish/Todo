@@ -258,9 +258,6 @@ h5 {
 .input_area button.add {
   min-width: 100px;
   height: 30px;
-}
-
-.input_area button.add {
   transform: translateY(-2.5px);
   background-color: var(--button-bg-color);
   color: white;
@@ -467,7 +464,6 @@ h5 {
   margin: 15px 10%;
 }
 
-
 .login_form label {
   width: 100%;
   font-size: 2.4rem;
@@ -497,6 +493,31 @@ h5 {
 }
 
 .login_form button:hover {
+  cursor: pointer;
+  transform: translateY(0.5px);  /* ボタンが押されるような効果 */
+  background-color: var(--button-bg-hover-color);
+  border-bottom: 2px var(--button-shadow-color) solid; /* 押したときに影を浅くする */
+}
+
+/************************************************/
+/* common button */
+
+button.link_button {
+  min-width: 250px;
+  height: 50px;
+  margin: 15px auto;
+  font-size: 2.4rem;
+  font-weight: bold;
+  transform: translateY(-2.5px);
+  background-color: var(--button-bg-color);
+  color: white;
+  border: var(--button-boreder-color) 1px solid;
+  border-bottom: 5px var(--button-shadow-color) solid;
+  border-radius: 15px;
+  transition: transform 0.1s ease, border-bottom 0.1s ease, background-color 0.2s ease;
+}
+
+button.link_button:hover {
   cursor: pointer;
   transform: translateY(0.5px);  /* ボタンが押されるような効果 */
   background-color: var(--button-bg-hover-color);

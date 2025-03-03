@@ -35,47 +35,35 @@ const TodoList = () => {
     const [taskTitle, setTaskTitle] = useState("");
     const [selectedDate, setSelectedDate] = useState(dayjs());
     const [inputValue, setInputValue] = useState(selectedDate.format('YYYY年MM月DD日 HH時mm分'));
+    const [jwtToken, setJwtToken] = useState(localStorage.getItem("jwt_token"));
 
-    // タスク一覧を取得
+    //　`jwt_token` の変更を監視し、ログアウト時にタスクをクリア
     useEffect(() => {
-        fetchTasks();
-    }, []);
+        if (jwtToken) {
+            fetchTasks();
+        } else {
+            setTasks([]); // ログアウト時にタスクをクリア
+        }
+    }, [jwtToken]); // `jwt_token` の変更を監視
 
+    // タスク取得関数
     const fetchTasks = async () => {
-        const token = localStorage.getItem('jwt_token');
-    
-        if (!token) {
-            console.error("JWTトークンが存在しません");
+       
+        if (!jwtToken) {
+            setTasks([]); // ログアウト時にタスクリストをクリア
             return;
         }
-    
+
         try {
-            console.log("送信するJWTトークン:", token);  // 🔥 デバッグ用ログ
-    
-            const response = await fetch('http://127.0.0.1:5000/api/tasks', {  // 👈 `/api/tasks` に修正
-                method: 'GET',
-                headers: {
-                    'Content-Type': 'application/json',
-                    "Authorization": `Bearer ${token}`
-                },
+            const response = await axios.get("http://127.0.0.1:5000/api/tasks", {
+                headers: { Authorization: `Bearer ${jwtToken}` },
             });
-    
-            if (!response.ok) {
-                const errorData = await response.json();
-                throw new Error(`タスクの取得に失敗: ${response.status} ${errorData.message || response.statusText}`);
-            }
-    
-            const data = await response.json();
-            console.log("取得したタスク:", data);
-            setTasks(data);
+
+            setTasks(response.data);
         } catch (error) {
-            console.error(error);
+            console.error("タスク取得エラー:", error);
         }
     };
-    
-
-    
-    
 
     const [error, setError] = useState("");
 
@@ -129,21 +117,37 @@ const TodoList = () => {
             console.error("タスク追加エラー:", error.response?.data || error.message);
         }
     };
-    
-
 
     // タスクの完了状態を更新
-    const toggleTask = (id, currentStatus) => {
+    const toggleTask = async (id, currentStatus) => {
+        const token = localStorage.getItem("jwt_token");
+    
+        if (!token) {
+            setError("JWTトークンがありません");
+            return;
+        }
+    
         const newStatus = !currentStatus; // 完了状態を切り替える
         const currentTime = newStatus ? new Date().toISOString() : null; // 完了時間をセット
-
-        axios.put(`http://127.0.0.1:5000/api/tasks/${id}`, {
-            completed: newStatus,
-            completed_time: currentTime
-        })
-        .then(() => fetchTasks()) // 更新後、タスク一覧を取得
-        .catch((error) => console.error("Error updating task:", error));
+    
+        try {
+            const response = await axios.put(
+                `http://127.0.0.1:5000/api/tasks/${id}`,
+                { completed: newStatus, completed_time: currentTime },
+                { headers: { "Authorization": `Bearer ${token}` } }
+            );
+    
+            console.log("タスク更新成功:", response.data);
+            
+            // フェッチして最新のデータを取得
+            fetchTasks(); 
+    
+        } catch (error) {
+            setError("タスクの更新に失敗しました");
+            console.error("タスク更新エラー:", error.response?.data || error.message);
+        }
     };
+    
 
     // タスクを削除
     const deleteTask = (id) => {
@@ -186,7 +190,7 @@ const TodoList = () => {
                                 setInputValue(newValue.format('YYYY年MM月DD日 HH時mm分'));  // フォーマットして更新
                             }
                         }}
-                        disablePast
+                        
                         minutesStep={5}  // 5分刻み
                         ampm={false}  // 24時間表示
                         format="YYYY年MM月DD日 HH時mm分"
@@ -198,8 +202,8 @@ const TodoList = () => {
                                 onChange={(e) => {
                                     const parsedDate = dayjs(e.target.value, 'YYYY年MM月DD日 HH時mm分');
                                     if (parsedDate.isValid()) {
-                                    setSelectedDate(parsedDate);
-                                    setInputValue(e.target.value);
+                                        setSelectedDate(parsedDate);
+                                        setInputValue(e.target.value);
                                     }
                                 }}
                                 />
@@ -217,7 +221,7 @@ const TodoList = () => {
 
             {/* 未完了タスク */}
             <table className="tasklist">
-                <caption><span className="red">未完了<i class="fa-regular fa-square checkbox-icon"></i></span>タスク一覧</caption>
+                <caption><span className="red">未完了<i className="fa-regular fa-square checkbox-icon"></i></span>タスク一覧</caption>
                 <thead>
                     <tr>
                         <th className="id">ID</th>
@@ -228,11 +232,11 @@ const TodoList = () => {
                         <th className="button">削除</th>
                     </tr>
                 </thead>
-                {pendingTasks.map(task => (
-                    <tbody>
+                <tbody>
+                    {pendingTasks.map(task => (
                         <tr key={task.id}>
                             <th className="id">{task.id}</th>
-                            <td className="title red">{task.title}<i class="fa-regular fa-square checkbox-icon"></i></td>
+                            <td className="title red">{task.title}</td>
                             <td className="date">
                                 {task.created_at ?
                                     new Intl.DateTimeFormat('ja-JP', {
@@ -263,7 +267,7 @@ const TodoList = () => {
                                 }
                             </td>
                             <td className="button">
-                            <button onClick={() => toggleTask(task.id, task.completed)}>
+                                <button onClick={() => toggleTask(task.id, task.completed)}>
                                     {task.completed ? "未完了にする" : "完了"}
                                 </button>
                             </td>
@@ -272,15 +276,15 @@ const TodoList = () => {
                             </td>
 
                         </tr>
-                    </tbody>
-                ))}
+                    ))}
+                </tbody>
             </table>
 
             <div className="hr"><hr></hr></div>
 
             {/* 完了タスク */}
             <table className="tasklist">
-                <caption><span className="green">完了<i class="fa-regular fa-square-check checkbox-icon"></i></span>タスク一覧</caption>
+                <caption><span className="green">完了<i className="fa-regular fa-square-check checkbox-icon"></i></span>タスク一覧</caption>
                 <thead>
                     <tr>
                         <th className="id">ID</th>
@@ -292,11 +296,11 @@ const TodoList = () => {
                         <th className="button">削除</th>
                     </tr>
                 </thead>
-                {completedTasks.map(task => (
-                    <tbody>
+                <tbody>
+                    {completedTasks.map(task => (
                         <tr key={task.id}>
                             <th className="id">{task.id}</th>
-                            <td className={`title ${task.completed ? 'green' : ''}`}>{task.title}<i class="fa-regular fa-square-check checkbox-icon"></i></td>
+                            <td className={`title ${task.completed ? 'green' : ''}`}>{task.title}</td>
                             {/* 期日 */}
                             <td className="date">
                                 {task.due_date?
@@ -340,30 +344,32 @@ const TodoList = () => {
                                         const completedMinutes = Math.floor(completedTime.getTime() / (1000 * 60)); // ミリ秒から分に変換
 
                                         // 差分を分単位で計算
-                                        const timeDiffInMinutes = dueMinutes - completedMinutes;
+                                        let timeDiffInMinutes = dueMinutes - completedMinutes;
+                                        const absDiffMinutes = Math.abs(timeDiffInMinutes);
 
                                         //正符号を表示するためのフォーマット
                                         const formatter = new Intl.NumberFormat("en", { signDisplay: "always" });
 
                                         //1日以上
-                                        if (timeDiffInMinutes >= 1440) {
-                                            const timeDiffInDay = Math.floor(timeDiffInMinutes / 1440)
-                                            const timeDiffInHour = Math.floor(timeDiffInMinutes % 1440 / 60);
-                                            const formatDay = formatter.format(-timeDiffInDay);
+                                        if (absDiffMinutes >= 1440) {
+                                            const timeDiffInDay = ~~(-timeDiffInMinutes / 1440);
+                                            const timeDiffInHour = Math.abs(~~(timeDiffInMinutes % 1440 / 60));
+                                            const formatDay = formatter.format(timeDiffInDay);
 
                                             return `${formatDay}日${timeDiffInHour}時間`;
                                         }
 
                                         //1時間以上
-                                        if (timeDiffInMinutes >= 60) {
-                                            const timeDiffInHour = Math.floor(timeDiffInMinutes / 60);
+                                        if (absDiffMinutes >= 60) {
+                                            const timeDiffInHour = ~~(-timeDiffInMinutes / 60);
                                             const formatHour = formatter.format(timeDiffInHour);
+                                            timeDiffInMinutes = Math.abs(~~(timeDiffInMinutes % 60));
 
-                                            return `${-formatHour}時間${timeDiffInMinutes}分`;
+                                            return `${formatHour}時間${timeDiffInMinutes}分`;
                                         }
 
-                                        const formatMinutes = formatter.format(-timeDiffInMinutes);
-                                        return `${formatMinutes} 分`;
+                                        const formatMinutes = formatter.format(timeDiffInMinutes);
+                                        return `${-formatMinutes} 分`;
                                     })()
                                     : "N/A"
                                 }
@@ -378,8 +384,8 @@ const TodoList = () => {
                             </td>
 
                         </tr>
-                    </tbody>
-                ))}
+                    ))}
+                </tbody>
             </table>
         </div>
     );

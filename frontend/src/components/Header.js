@@ -6,7 +6,7 @@ const Header = ({ user, handleLogout}) => {
 
     useEffect(() => {
         console.log("Updated User in Header:", user);
-    }, [user]);    
+    }, [user]);
 
     return (
         <header>

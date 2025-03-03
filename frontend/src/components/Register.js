@@ -1,7 +1,7 @@
-import { useState } from "react";
+import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 
-const Register = ({ setError, setFlashMessage }) => {
+const Register = ({ setError, setUser }) => {
     const [name, setName] = useState("");
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
@@ -9,38 +9,74 @@ const Register = ({ setError, setFlashMessage }) => {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
+        setError("");
+
         try {
             const response = await fetch("http://127.0.0.1:5000/auth/register", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({ name, email, password }),
+                credentials: 'include'
             });
+
             const data = await response.json();
+            console.log("登録レスポンス:", data);
 
             if (response.ok) {
-                navigate("/", { state: { message: "ユーザー登録が完了しました", type: "success" } });
+                console.log("登録成功:", data);
+
+                // JWT トークンを保存
+                localStorage.setItem("jwt_token", data.access_token);
+
+                // ユーザー情報を保存
+                const userData = { id: data.user.id, name: data.user.name };
+                localStorage.setItem("user", JSON.stringify(userData));
+                setUser(userData);
+
+                navigate("/", { state: { message: "登録 & ログイン成功" } });
             } else {
                 setError(`登録失敗: ${data.message}`);
             }
         } catch (error) {
-            setError(`ネットワークエラーが発生しました : ${error.message}`);
+            setError(`エラー: ${error.message || String(error)}`);
         }
     };
 
     return (
-        <div className="app_container">
+        <div>
             <h2 className="title">新規登録</h2>
             <form className="register_form" onSubmit={handleSubmit}>
-                <label htmlFor="name">お名前</label>
-                <input type="text" placeholder="お名前" value={name} onChange={(e) => setName(e.target.value)} required />
+                <label htmlFor="name">名前</label>
+                <input
+                    type="text"
+                    id="name"
+                    placeholder="名前"
+                    value={name}
+                    onChange={(e) => setName(e.target.value)}
+                    required
+                />
 
                 <label htmlFor="email">メールアドレス</label>
-                <input type="email" placeholder="メールアドレス" value={email} onChange={(e) => setEmail(e.target.value)} required />
+                <input
+                    type="email"
+                    id="email"
+                    placeholder="メールアドレス"
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                    required
+                />
 
                 <label htmlFor="password">パスワード</label>
-                <input type="password" placeholder="パスワード" value={password} onChange={(e) => setPassword(e.target.value)} required />
+                <input
+                    type="password"
+                    id="password"
+                    placeholder="パスワード"
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                    required
+                />
 
-                <button type="submit">登録</button>
+                <button type="submit">新規登録</button>
             </form>
         </div>
     );
