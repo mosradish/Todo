@@ -1,6 +1,7 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useCallback } from 'react';
 import '../App.css';
 import axios from 'axios';
+
 
 //dayjs
 import dayjs from 'dayjs';
@@ -35,22 +36,12 @@ const TodoList = () => {
     const [taskTitle, setTaskTitle] = useState("");
     const [selectedDate, setSelectedDate] = useState(dayjs());
     const [inputValue, setInputValue] = useState(selectedDate.format('YYYY年MM月DD日 HH時mm分'));
-    const [jwtToken, setJwtToken] = useState(localStorage.getItem("jwt_token"));
-
-    //　`jwt_token` の変更を監視し、ログアウト時にタスクをクリア
-    useEffect(() => {
-        if (jwtToken) {
-            fetchTasks();
-        } else {
-            setTasks([]); // ログアウト時にタスクをクリア
-        }
-    }, [jwtToken]); // `jwt_token` の変更を監視
+    const [jwtToken] = useState(localStorage.getItem("jwt_token"));
 
     // タスク取得関数
-    const fetchTasks = async () => {
-       
+    const fetchTasks = useCallback(async () => {
         if (!jwtToken) {
-            setTasks([]); // ログアウト時にタスクリストをクリア
+            setTasks([]);
             return;
         }
 
@@ -58,12 +49,16 @@ const TodoList = () => {
             const response = await axios.get("http://127.0.0.1:5000/api/tasks", {
                 headers: { Authorization: `Bearer ${jwtToken}` },
             });
-
             setTasks(response.data);
         } catch (error) {
             console.error("タスク取得エラー:", error);
         }
-    };
+    }, [jwtToken]);
+
+    // `jwtToken` の変更を監視
+    useEffect(() => {
+        fetchTasks();
+    }, [fetchTasks]);
 
     const [error, setError] = useState("");
 
