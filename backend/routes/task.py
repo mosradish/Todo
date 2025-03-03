@@ -67,7 +67,14 @@ def add_task():
         due_date = None
         if 'due_date' in data and data['due_date']:
             try:
-                due_date = datetime.fromisoformat(data['due_date']).astimezone(japan_tz)
+                from dateutil import parser
+
+                if 'due_date' in data and data['due_date']:
+                    try:
+                        due_date = parser.parse(data['due_date']).astimezone(japan_tz)
+                    except ValueError:
+                        return jsonify({"message": "無効な due_date 形式"}), 400
+
             except ValueError:
                 return jsonify({"message": "無効な due_date 形式"}), 400
 

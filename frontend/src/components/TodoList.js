@@ -190,7 +190,7 @@ const TodoList = () => {
                                 setInputValue(newValue.format('YYYY年MM月DD日 HH時mm分'));  // フォーマットして更新
                             }
                         }}
-                        
+                        minDateTime={dayjs()}
                         minutesStep={5}  // 5分刻み
                         ampm={false}  // 24時間表示
                         format="YYYY年MM月DD日 HH時mm分"
@@ -368,8 +368,8 @@ const TodoList = () => {
                                             return `${formatHour}時間${timeDiffInMinutes}分`;
                                         }
 
-                                        const formatMinutes = formatter.format(timeDiffInMinutes);
-                                        return `${-formatMinutes} 分`;
+                                        const formatMinutes = formatter.format(-timeDiffInMinutes);
+                                        return `${formatMinutes} 分`;
                                     })()
                                     : "N/A"
                                 }
