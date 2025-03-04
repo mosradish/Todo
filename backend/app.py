@@ -42,8 +42,9 @@ app.register_blueprint(user_bp, url_prefix='/api')
 @app.route('/', defaults={'path': ''})
 @app.route('/<path:path>')
 def serve_react(path):
-    root_dir = os.path.join(app.root_path, 'frontend', 'build')
-    
+    # React のビルドディレクトリへのパスを修正
+    root_dir = os.path.join(app.root_path, '..', 'frontend', 'build')
+
     # リクエストされたパスのファイルが存在するなら、それを返す
     if os.path.exists(os.path.join(root_dir, path)):
         return send_from_directory(root_dir, path)
