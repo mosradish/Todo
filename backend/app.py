@@ -39,9 +39,17 @@ app.register_blueprint(register_bp, url_prefix='/auth')
 app.register_blueprint(task_bp, url_prefix='/api')
 app.register_blueprint(user_bp, url_prefix='/api')
 
-@app.route('/')
-def serve_react():
-    return send_from_directory(os.path.join(app.root_path, 'frontend', 'build'), 'index.html')
+@app.route('/', defaults={'path': ''})
+@app.route('/<path:path>')
+def serve_react(path):
+    root_dir = os.path.join(app.root_path, 'frontend', 'build')
+    
+    # リクエストされたパスのファイルが存在するなら、それを返す
+    if os.path.exists(os.path.join(root_dir, path)):
+        return send_from_directory(root_dir, path)
+
+    # 存在しない場合は `index.html` を返す（React のルーティング対応）
+    return send_from_directory(root_dir, 'index.html')
 
 if __name__ == '__main__':
     app.run(debug=True)
