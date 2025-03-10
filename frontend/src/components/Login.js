@@ -1,14 +1,14 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 
-const Login = ({ setError, setUser }) => {
+const Login = ({ setErrorMessage, setUser }) => {
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
     const navigate = useNavigate();
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-        setError("");
+        setErrorMessage("");
     
         try {
             const response = await fetch("http://127.0.0.1:5000/auth/login", {
@@ -34,10 +34,10 @@ const Login = ({ setError, setUser }) => {
     
                 navigate("/", { state: { message: "ログインに成功しました" } });
             } else {
-                setError(`ログイン失敗: ${data.message}`);
+                setErrorMessage(`ログイン失敗: ${data.message}`);
             }
         } catch (error) {
-            setError(`エラー: ${error.message || String(error)}`);
+            setErrorMessage(`エラー: ${error.message || String(error)}`);
         }
     };
 

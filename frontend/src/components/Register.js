@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 
-const Register = ({ setError, setUser }) => {
+const Register = ({ setErrorMessage, setUser }) => {
     const [name, setName] = useState("");
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
@@ -9,7 +9,7 @@ const Register = ({ setError, setUser }) => {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-        setError("");
+        setErrorMessage("");
 
         try {
             const response = await fetch("http://127.0.0.1:5000/auth/register", {
@@ -35,10 +35,10 @@ const Register = ({ setError, setUser }) => {
 
                 navigate("/", { state: { message: "登録 & ログイン成功" } });
             } else {
-                setError(`登録失敗: ${data.message}`);
+                setErrorMessage(`登録失敗: ${data.message}`);
             }
         } catch (error) {
-            setError(`エラー: ${error.message || String(error)}`);
+            setErrorMessage(`エラー: ${error.message || String(error)}`);
         }
     };
 
