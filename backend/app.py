@@ -43,9 +43,6 @@ app.register_blueprint(user_bp, url_prefix='/api')
 def health_check():
     return jsonify({"status": "ok"}), 200
 
-if __name__ == "__main__":
-    app.run(debug=True)
-
 @app.route('/', defaults={'path': ''})
 @app.route('/<path:path>')
 def serve_react(path):
