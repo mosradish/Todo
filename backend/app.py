@@ -5,8 +5,6 @@ import os
 from flask_jwt_extended import JWTManager, get_jwt
 from dotenv import load_dotenv
 from models import db  # models.py から db をインポート
-import logging
-from logging.handlers import RotatingFileHandler
 
 #機能import部分
 from routes.login import login_bp
@@ -39,18 +37,6 @@ app.register_blueprint(logout_bp, url_prefix='/auth')
 app.register_blueprint(register_bp, url_prefix='/auth')
 app.register_blueprint(task_bp, url_prefix='/api')
 app.register_blueprint(user_bp, url_prefix='/api')
-
-
-# log 設定
-if not os.path.exists('logs'):
-    os.mkdir('logs')
-
-file_handler = RotatingFileHandler('logs/flask.log', maxBytes=10240, backupCount=10)
-file_handler.setLevel(logging.INFO)
-app.logger.addHandler(file_handler)
-
-# Flask アプリケーションの設定
-app.logger.setLevel(logging.INFO)
 
 @app.route("/health", methods=["GET"])
 def health_check():
