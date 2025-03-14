@@ -19,7 +19,6 @@ from routes.user import user_bp
 load_dotenv()
 
 app = Flask(__name__)
-app.config["DEBUG"] = True  # 🔥 デバッグモードを有効にする
 tasks = []
 # ReactとFlaskの通信を許可
 CORS(app, supports_credentials=True)
