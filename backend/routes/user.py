@@ -6,7 +6,7 @@ from models import User
 user_bp = Blueprint('user', __name__)
 
 # ユーザー情報取得エンドポイント
-@user_bp.route('/api/user', methods=['GET'])
+@user_bp.route('/user', methods=['GET'])
 @jwt_required()
 def get_user():
     print("JWTの中身:", get_jwt())  # JWTのペイロードをログ出力
