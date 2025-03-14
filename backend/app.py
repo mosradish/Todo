@@ -5,6 +5,7 @@ import os
 from flask_jwt_extended import JWTManager, get_jwt
 from dotenv import load_dotenv
 from models import db  # models.py から db をインポート
+from sqlalchemy import create_engine
 
 #機能import部分
 from routes.login import login_bp
@@ -37,6 +38,16 @@ app.register_blueprint(logout_bp, url_prefix='/auth')
 app.register_blueprint(register_bp, url_prefix='/auth')
 app.register_blueprint(task_bp, url_prefix='/api')
 app.register_blueprint(user_bp, url_prefix='/api')
+
+# 接続確認
+engine = create_engine(os.environ.get('DATABASE_URL'))
+try:
+    connection = engine.connect()
+    print("Database connected successfully!")
+    connection.close()
+except Exception as e:
+    print("Error connecting to the database:", e)
+
 
 @app.route("/health", methods=["GET"])
 def health_check():
