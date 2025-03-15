@@ -3,6 +3,7 @@ import './Header.css';
 import { Link } from 'react-router-dom';
 import axios from 'axios';
 import { useLocation, useNavigate } from 'react-router-dom';
+import { API_URL } from "../config";
 
 const Header = ({ user, handleLogout, setErrorMessage, errorMessage, setFlashMessage, flashMessage }) => {
 
@@ -16,7 +17,7 @@ const Header = ({ user, handleLogout, setErrorMessage, errorMessage, setFlashMes
     useEffect(() => {
         const checkUserStatus = async () => {
             try {
-                const response = await axios.get("http://127.0.0.1:5000/api/user", { withCredentials: true });
+                const response = await axios.get(`${API_URL}/api/user`, { withCredentials: true });
                 if (response.status !== 200) {
                     handleLogout();
                 }

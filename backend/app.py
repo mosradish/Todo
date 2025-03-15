@@ -40,7 +40,7 @@ app.register_blueprint(task_bp, url_prefix='/api')
 app.register_blueprint(user_bp, url_prefix='/api')
 
 # 接続確認
-engine = create_engine(os.environ.get('DATABASE_URL'))
+engine = create_engine(os.environ.get('DATABASE_URL', 'sqlite:///app.db'))
 try:
     connection = engine.connect()
     print("Database connected successfully!")
