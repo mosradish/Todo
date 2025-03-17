@@ -6,6 +6,9 @@ from flask_jwt_extended import JWTManager, get_jwt
 from dotenv import load_dotenv
 from models import db  # models.py から db をインポート
 from sqlalchemy import create_engine
+import sys
+
+sys.path.append(os.path.abspath(os.path.dirname(__file__)))
 
 #機能import部分
 from routes.login import login_bp
