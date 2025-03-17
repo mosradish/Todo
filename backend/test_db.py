@@ -2,7 +2,7 @@ import psycopg2
 
 DB_NAME = "postgres"
 DB_USER = "mosradish"
-DB_PASS = "Saru9240%"
+DB_PASS = "Saru9240"
 DB_HOST = "tododb.cja2o0uecn6b.ap-northeast-1.rds.amazonaws.com"
 DB_PORT = "5432"
 
