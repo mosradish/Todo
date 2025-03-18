@@ -16,7 +16,7 @@ function RouterWrapper({ children, setErrorMessage, setIsChecking }) {
     useEffect(() => {
         // ページ推移時に即座にエラーメッセージをクリア
         setErrorMessage(null);
-        
+
         let isMounted = true;
         setIsChecking(true);
 
@@ -101,7 +101,7 @@ function App() {
                     />
                     {isChecking && (
                         <h4 className="connection">接続を確認しています...</h4>
-                    )}  
+                    )}
                     <div className="main_wrapper">
                         <Routes>
                             <Route path="/" element={<Home handleLogout={handleLogout} setErrorMessage={setErrorMessage} />} />
