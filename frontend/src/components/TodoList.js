@@ -1,7 +1,6 @@
 import React, { useEffect, useState, useCallback } from 'react';
 import '../App.css';
 import axios from 'axios';
-import { API_URL } from "../config";
 
 //dayjs
 import dayjs from 'dayjs';
@@ -46,7 +45,7 @@ const TodoList = () => {
         }
 
         try {
-            const response = await axios.get(`${API_URL}/api/tasks`, {
+            const response = await axios.get("/api/tasks", {
                 headers: { Authorization: `Bearer ${jwtToken}` },
             });
             setTasks(response.data);
@@ -96,7 +95,7 @@ const TodoList = () => {
         console.log("送信データ:", JSON.stringify(requestData));  // 🔥 デバッグ用
     
         try {
-            const response = await axios.post(`${API_URL}/api/tasks`, requestData, {
+            const response = await axios.post("/api/tasks", requestData, {
                 headers: {
                     "Content-Type": "application/json",
                     "Authorization": `Bearer ${token}`
@@ -127,7 +126,7 @@ const TodoList = () => {
     
         try {
             const response = await axios.put(
-                `${API_URL}/api/tasks/${id}`,
+                "/api/tasks/${id}",
                 { completed: newStatus, completed_time: currentTime },
                 { headers: { "Authorization": `Bearer ${token}` } }
             );
@@ -148,7 +147,7 @@ const TodoList = () => {
     const deleteTask = (id) => {
         const token = localStorage.getItem('jwt_token');
     
-        axios.delete(`${API_URL}/api/tasks/${id}`, {
+        axios.delete(`/api/tasks/${id}`, {
             headers: { "Authorization": `Bearer ${token}` }
         })
         .then(() => fetchTasks())
