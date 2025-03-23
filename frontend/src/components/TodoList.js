@@ -126,7 +126,7 @@ const TodoList = () => {
     
         try {
             const response = await axios.put(
-                "/api/tasks/${id}",
+                `/api/tasks/${id}`,
                 { completed: newStatus, completed_time: currentTime },
                 { headers: { "Authorization": `Bearer ${token}` } }
             );
