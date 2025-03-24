@@ -65,9 +65,14 @@ def add_task():
             return jsonify({"message": "認証エラー: ユーザーIDが取得できません"}), 401
 
         due_date = None
+        # due_date を UTC に変換する
         if 'due_date' in data and data['due_date']:
             try:
-                due_date = parser.parse(data['due_date']).astimezone(pytz.UTC)  # UTCで保存
+                # `parser.parse()` でタイムゾーン付きかどうかを判定し、ない場合は UTC を適用
+                dt_parsed = parser.parse(data['due_date'])
+                if dt_parsed.tzinfo is None:
+                    dt_parsed = pytz.UTC.localize(dt_parsed)  # タイムゾーンなしなら UTC を適用
+                due_date = dt_parsed.astimezone(pytz.UTC)  # 明示的に UTC へ変換
             except ValueError:
                 return jsonify({"message": "無効な due_date 形式"}), 400
 
