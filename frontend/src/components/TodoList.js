@@ -86,7 +86,9 @@ const TodoList = () => {
             return;
         }
     
-        const dueDate = selectedDate ? dayjs(selectedDate).tz("Asia/Tokyo").toISOString() : null;
+        // `selectedDate` を **UTC** に変換して ISO 8601 形式で送信
+        const dueDate = selectedDate ? dayjs(selectedDate).utc().format() : null;
+    
         const requestData = {
             title: taskTitle,
             due_date: dueDate
@@ -111,7 +113,7 @@ const TodoList = () => {
             console.error("タスク追加エラー:", error.response?.data || error.message);
         }
     };
-
+    
     // タスクの完了状態を更新
     const toggleTask = async (id, currentStatus) => {
         const token = localStorage.getItem("jwt_token");
