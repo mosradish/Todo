@@ -86,15 +86,15 @@ const TodoList = () => {
             return;
         }
     
-        // `selectedDate` を **UTC** に変換して ISO 8601 形式で送信
-        const dueDate = selectedDate ? dayjs(selectedDate).utc().format() : null;
+        // 二重変換されないようにそのままの形式で送信する。
+        const dueDate = selectedDate ? selectedDate.toISOString() : null;
     
         const requestData = {
             title: taskTitle,
             due_date: dueDate
         };
     
-        console.log("送信データ:", JSON.stringify(requestData));  // 🔥 デバッグ用
+        console.log("送信データ:", JSON.stringify(requestData));  // デバッグ用
     
         try {
             const response = await axios.post("/api/tasks", requestData, {
