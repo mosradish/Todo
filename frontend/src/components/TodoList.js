@@ -103,7 +103,12 @@ const TodoList = () => {
                 }
             });
     
-            console.log("タスク追加成功:", response.data);
+            console.log("タスク追加成功: ", {
+                ...response.data,
+                created_at: new Date(response.data.created_at).toLocaleString("ja-JP", { timeZone: "Asia/Tokyo" }),
+                due_date: response.data.due_date ? new Date(response.data.due_date).toLocaleString("ja-JP", { timeZone: "Asia/Tokyo" }) : null,
+                completed_time: response.data.completed_time ? new Date(response.data.completed_time).toLocaleString("ja-JP", { timeZone: "Asia/Tokyo" }) : null
+            });
             setTasks((prevTasks) => [...prevTasks, response.data]);
             setTaskTitle("");
             setSelectedDate(dayjs());
