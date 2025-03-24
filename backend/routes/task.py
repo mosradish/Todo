@@ -16,15 +16,13 @@ japan_tz = pytz.timezone('Asia/Tokyo')
 def get_tasks():
     try:
         current_user_id = get_jwt_identity()
-        print(f"取得したユーザーID (raw): {current_user_id}")  # デバッグ
 
         if not current_user_id:
             return jsonify({"message": "認証エラー: ユーザーIDが取得できません"}), 401
 
-        current_user_id = int(current_user_id)  # `int()` に変換
+        current_user_id = int(current_user_id)
 
         tasks = Task.query.filter_by(user_id=current_user_id).all()
-        print(f"取得したタスク数: {len(tasks)}")  # デバッグ
 
         return jsonify([{
             "id": task.id,
@@ -42,7 +40,6 @@ def get_tasks():
 
 
 # タスクを追加
-# タスクを追加
 @task_bp.route('/tasks', methods=['POST'])
 @jwt_required()
 def add_task():
@@ -51,14 +48,14 @@ def add_task():
         if not data or 'title' not in data:
             return jsonify({"message": "タイトルが必要です"}), 400
 
-        user_id = int(get_jwt_identity())  # 取得したユーザーIDを int に変換
+        user_id = int(get_jwt_identity())
 
         due_date = None
         if 'due_date' in data and data['due_date']:
             try:
                 dt_parsed = parser.parse(data['due_date'])
                 if dt_parsed.tzinfo is None:
-                    dt_parsed = japan_tz.localize(dt_parsed)  # JST を設定
+                    dt_parsed = japan_tz.localize(dt_parsed)  
                 due_date = dt_parsed.astimezone(pytz.utc)  # UTC に変換して保存
             except ValueError:
                 return jsonify({"message": "無効な due_date 形式"}), 400
@@ -67,7 +64,7 @@ def add_task():
             user_id=user_id,
             title=data['title'],
             completed=False,
-            created_at=datetime.now(pytz.utc),
+            created_at=datetime.now(pytz.utc),  # ここを明示的にUTC
             due_date=due_date
         )
 
@@ -78,7 +75,7 @@ def add_task():
             "id": new_task.id,
             "user_id": new_task.user_id,
             "title": new_task.title,
-            "created_at": new_task.created_at.isoformat(),  # 取得時にUTC
+            "created_at": new_task.created_at.isoformat(),  # UTCで取得
             "due_date": new_task.due_date.isoformat() if new_task.due_date else None,
             "completed_time": new_task.completed_time.isoformat() if new_task.completed_time else None,
             "completed": new_task.completed
@@ -87,7 +84,6 @@ def add_task():
     except Exception as e:
         print(f"エラー発生: {str(e)}")
         return jsonify({"message": f"サーバーエラー: {str(e)}"}), 500
-
 
 
 # タスクの完了状態を更新
@@ -125,24 +121,6 @@ def update_task(id):
         print(f"エラー発生: {str(e)}")
         return jsonify({"message": f"サーバーエラー: {str(e)}"}), 500
 
-
-# タスクの期限を更新
-@task_bp.route('/tasks/<int:id>/due_date', methods=['PUT'])
-@jwt_required()
-def update_due_date(id):
-    task = Task.query.get(id)
-    if not task:
-        return jsonify({"message": "Task not found"}), 404
-
-    data = request.json
-    if 'due_date' in data and data['due_date']:
-        try:
-            due_date = parser.parse(data['due_date']).astimezone(japan_tz)
-        except ValueError:
-            return jsonify({"message": "Invalid due_date format"}), 400
-
-    db.session.commit()
-    return jsonify({"message": "Due date updated!"})
 
 # タスクを削除
 @task_bp.route('/tasks/<int:id>', methods=['DELETE'])
