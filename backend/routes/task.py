@@ -87,9 +87,9 @@ def add_task():
             "id": new_task.id,
             "user_id": new_task.user_id,
             "title": new_task.title,
-            "created_at": new_task.created_at.isoformat(),  # 取得時にUTC
-            "due_date": new_task.due_date.isoformat() if new_task.due_date else None,
-            "completed_time": new_task.completed_time.isoformat() if new_task.completed_time else None,
+            "created_at": new_task.created_at.astimezone(japan_tz).isoformat(),  # 取得時にUTC
+            "due_date": new_task.due_date.astimezone(japan_tz).isoformat() if new_task.due_date else None,
+            "completed_time": new_task.completed_time.astimezone(japan_tz).isoformat() if new_task.completed_time else None,
             "completed": new_task.completed
         })
 
@@ -124,9 +124,9 @@ def update_task(id):
             "id": task.id,
             "user_id": task.user_id,
             "title": task.title,
-            "created_at": task.created_at.isoformat(),
-            "due_date": task.due_date.isoformat() if task.due_date else None,
-            "completed_time": task.completed_time.isoformat() if task.completed_time else None,
+            "created_at": task.created_at.astimezone(japan_tz).isoformat() if task.created_at else None,
+            "due_date": task.due_date.astimezone(japan_tz).isoformat() if task.due_date else None,
+            "completed_time": task.completed_time.astimezone(japan_tz).isoformat() if task.completed_time else None,
             "completed": task.completed
         }), 200
 
