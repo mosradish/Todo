@@ -298,8 +298,16 @@ const TodoList = () => {
                             <td className={`title ${task.completed ? 'green' : ''}`}>{task.title}</td>
                             {/* 期日 */}
                             <td className="date">
-                                {task.due_date
-                                    ? dayjs(task.due_date).tz("Asia/Tokyo").format("YYYY年MM月DD日 HH時mm分")
+                                {task.due_date ?
+                                    new Intl.DateTimeFormat('ja-JP', {
+                                        timeZone: 'Asia/Tokyo',
+                                        /* year: 'numeric', */
+                                        month: 'long',
+                                        day: 'numeric',
+                                        weekday: 'short',
+                                        hour: '2-digit',
+                                        minute: '2-digit',
+                                    }).format(new Date(task.due_date))
                                     : "N/A"
                                 }
                             </td>
