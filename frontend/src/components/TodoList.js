@@ -167,7 +167,7 @@ const TodoList = () => {
 
     const formatDate = (dateString) => {
         if (!dateString) return "N/A"; 
-        return dayjs.utc(dateString).tz("Asia/Tokyo").format("YYYY年MM月DD日 HH:mm");
+        return dayjs.utc(dateString).tz("Asia/Tokyo").format("MM月DD日(ddd) HH時mm分");
     };
     
 
@@ -284,33 +284,11 @@ const TodoList = () => {
                             <td className={`title ${task.completed ? 'green' : ''}`}>{task.title}</td>
                             {/* 期日 */}
                             <td className="date">
-                                {task.due_date ?
-                                    new Intl.DateTimeFormat('ja-JP', {
-                                        timeZone: 'Asia/Tokyo',
-                                        /* year: 'numeric', */
-                                        month: 'long',
-                                        day: 'numeric',
-                                        weekday: 'short',
-                                        hour: '2-digit',
-                                        minute: '2-digit',
-                                    }).format(new Date(task.due_date))
-                                    : "N/A"
-                                }
+                                {formatDate(task.due_date)}
                             </td>
                             {/* 完了日時 */}
                             <td className="date">
-                                {task.completed_time ?
-                                    new Intl.DateTimeFormat('ja-JP', {
-                                        timeZone: 'Asia/Tokyo',
-                                        /* year: 'numeric', */
-                                        month: 'long',
-                                        day: 'numeric',
-                                        weekday: 'short',
-                                        hour: '2-digit',
-                                        minute: '2-digit',
-                                    }).format(new Date(task.completed_time))
-                                    : "N/A"
-                                }
+                                {formatDate(task.completed_time)}
                             </td>
                             {/* 完了差分 */}
                             <td className={`date ${(task.due_date <= task.completed_time) ? 'red' : 'green'}`}>
