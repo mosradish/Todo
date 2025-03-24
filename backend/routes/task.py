@@ -30,11 +30,15 @@ def get_tasks():
             "id": task.id,
             "user_id": task.user_id,
             "title": task.title,
-            "created_at": task.created_at.astimezone(japan_tz).isoformat() if task.created_at else None,
-            "due_date": task.due_date.astimezone(japan_tz).isoformat() if task.due_date else None,
-            "completed_time": task.completed_time.astimezone(japan_tz).isoformat() if task.completed_time else None,
+            "created_at": (task.created_at.replace(tzinfo=pytz.utc).astimezone(japan_tz).isoformat()
+                        if task.created_at else None),
+            "due_date": (task.due_date.replace(tzinfo=pytz.utc).astimezone(japan_tz).isoformat()
+                        if task.due_date else None),
+            "completed_time": (task.completed_time.replace(tzinfo=pytz.utc).astimezone(japan_tz).isoformat()
+                            if task.completed_time else None),
             "completed": task.completed
         } for task in tasks])
+
 
     except Exception as e:
         print(f"エラー発生: {str(e)}")
