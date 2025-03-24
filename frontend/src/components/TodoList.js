@@ -86,8 +86,7 @@ const TodoList = () => {
             return;
         }
     
-        // 二重変換されないようにそのままの形式で送信する。
-        const dueDate = selectedDate ? selectedDate.dayjs().utc().toISOString() : null;
+        const dueDate = selectedDate ? selectedDate.toISOString() : null;
     
         const requestData = {
             title: taskTitle,
@@ -124,7 +123,7 @@ const TodoList = () => {
         }
     
         const newStatus = !currentStatus; // 完了状態を切り替える
-        const currentTime = newStatus ? new Date().dayjs().utc().toISOString() : null; // 完了時間をセット
+        const currentTime = newStatus ? new Date().toISOString() : null; // 完了時間をセット
     
         try {
             const response = await axios.put(
