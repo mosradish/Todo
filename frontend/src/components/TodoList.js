@@ -105,10 +105,11 @@ const TodoList = () => {
     
             console.log("タスク追加成功: ", {
                 ...response.data,
-                created_at: new Date(response.data.created_at).toLocaleString("ja-JP", { timeZone: "Asia/Tokyo" }),
-                due_date: response.data.due_date ? new Date(response.data.due_date).toLocaleString("ja-JP", { timeZone: "Asia/Tokyo" }) : null,
-                completed_time: response.data.completed_time ? new Date(response.data.completed_time).toLocaleString("ja-JP", { timeZone: "Asia/Tokyo" }) : null
+                created_at: new Date(response.data.created_at).toISOString(),
+                due_date: response.data.due_date ? new Date(response.data.due_date).toISOString() : null,
+                completed_time: response.data.completed_time ? new Date(response.data.completed_time).toISOString() : null
             });
+            
             setTasks((prevTasks) => [...prevTasks, response.data]);
             setTaskTitle("");
             setSelectedDate(dayjs());
@@ -163,6 +164,12 @@ const TodoList = () => {
     // 完了タスクと未完了タスクを分ける
     const completedTasks = tasks.filter(task => task.completed);
     const pendingTasks = tasks.filter(task => !task.completed);
+
+    const formatDate = (dateString) => {
+        if (!dateString) return "N/A"; 
+        return dayjs.utc(dateString).tz("Asia/Tokyo").format("YYYY年MM月DD日 HH:mm");
+    };
+    
 
     return (
 
@@ -237,34 +244,9 @@ const TodoList = () => {
                         <tr key={task.id}>
                             <th className="id">{task.id}</th>
                             <td className="title red">{task.title}</td>
-                            <td className="date">
-                                {task.created_at ?
-                                    new Intl.DateTimeFormat('ja-JP', {
-                                        timeZone: 'Asia/Tokyo',
-                                        /* year: 'numeric', */
-                                        month: 'long',
-                                        day: 'numeric',
-                                        weekday: 'short',
-                                        hour: '2-digit',
-                                        minute: '2-digit',
-                                    }).format(new Date(task.created_at))
-                                    : "N/A"
-                                }
-                            </td>
-                            <td className=
-                                {`date ${!task.completed && (new Date(task.due_date) <= new Date()) ? 'gray' : ''} ${task.completed ? 'green' : ''}`}>
-                                {task.due_date?
-                                    new Intl.DateTimeFormat('ja-JP', {
-                                        timeZone: 'Asia/Tokyo',
-                                        /* year: 'numeric', */
-                                        month: 'long',
-                                        day: 'numeric',
-                                        weekday: 'short',
-                                        hour: '2-digit',
-                                        minute: '2-digit',
-                                    }).format(new Date(task.due_date))
-                                    : "N/A"
-                                }
+                            <td className="date">{formatDate(task.created_at)}</td>
+                            <td className={`date ${!task.completed && (new Date(task.due_date) <= new Date()) ? 'gray' : ''} ${task.completed ? 'green' : ''}`}>
+                                {formatDate(task.due_date)}
                             </td>
                             <td className="button">
                                 <button onClick={() => toggleTask(task.id, task.completed)}>
@@ -274,7 +256,6 @@ const TodoList = () => {
                             <td className="button">
                                 <button onClick={() => deleteTask(task.id)}>削除</button>
                             </td>
-
                         </tr>
                     ))}
                 </tbody>
