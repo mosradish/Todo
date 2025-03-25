@@ -51,6 +51,20 @@ function RouterWrapper({ children, setErrorMessage, setIsChecking }) {
     return children;
 }
 
+//user変化時にjwt_tokenからuserを取得
+useEffect(() => {
+    const storedUser = localStorage.getItem("user");
+    const token = localStorage.getItem("jwt_token");
+
+    if (storedUser && token) {
+        try {
+            setUser(JSON.parse(storedUser));
+        } catch (error) {
+            console.error("Failed to parse user data from localStorage", error);
+        }
+    }
+}, [user]); // <- `user` の変化を監視
+
 function App() {
     const [user, setUser] = useState(() => {
         try {
