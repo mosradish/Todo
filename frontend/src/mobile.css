@@ -1,0 +1,26 @@
+@media (max-width: 1025px) {
+
+    .mobile_display_none {
+        display: none;
+    }
+
+    .mobile_only_display {
+        display: block;
+    }
+
+    .input_area {
+        flex-wrap: wrap;
+    }
+
+    .input_area .task_title {
+        width: 100%;
+        margin: 10px 0;
+    }
+
+    .mobile_area {
+        display: flex;
+        width: 100%;
+        margin : 10px 0;
+        justify-content: space-between;
+    }
+}

@@ -17,18 +17,33 @@ const Header = ({ user, handleLogout, setErrorMessage, errorMessage, setFlashMes
     useEffect(() => {
         const checkUserStatus = async () => {
             try {
-                const response = await axios.get(`${API_URL}/api/user`, { withCredentials: true });
+                const token = localStorage.getItem("jwt_token"); // localStorageからJWTトークンを取得
+    
+                if (!token) {
+                    console.log("No token found, user is not authenticated.");
+                    handleLogout();
+                    return;
+                }
+    
+                const response = await axios.get(`${API_URL}/api/user`, {
+                    withCredentials: true,
+                    headers: {
+                        'Authorization': `Bearer ${token}` // JWTトークンをヘッダーに追加
+                    }
+                });
+    
                 if (response.status !== 200) {
                     handleLogout();
                 }
             } catch (error) {
-                console.log("Backend unreachable, setting user to null");
-                handleLogout();
+                console.log("Backend unreachable, error occurred but not logging out.");
+                // 接続できない場合はログアウトしない
+                setErrorMessage("バックエンドに接続できませんでした");
             }
         };
-
+    
         checkUserStatus();
-    }, []);
+    }, [handleLogout, setErrorMessage]);
 
     // エラーメッセージのクリア処理
     useEffect(() => {

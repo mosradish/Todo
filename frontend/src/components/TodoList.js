@@ -1,6 +1,6 @@
 import React, { useEffect, useState, useCallback } from 'react';
-import '../App.css';
 import axios from 'axios';
+import { API_URL } from "../config";
 
 //dayjs
 import dayjs from 'dayjs';
@@ -45,7 +45,7 @@ const TodoList = () => {
         }
 
         try {
-            const response = await axios.get("/api/tasks", {
+            const response = await axios.get(`${API_URL}/api/tasks`, {
                 headers: { Authorization: `Bearer ${jwtToken}` },
             });
             setTasks(response.data);
@@ -96,7 +96,7 @@ const TodoList = () => {
         console.log("送信データ:", JSON.stringify(requestData));  // デバッグ用
     
         try {
-            const response = await axios.post("/api/tasks", requestData, {
+            const response = await axios.post(`${API_URL}/api/tasks`, requestData, {
                 headers: {
                     "Content-Type": "application/json",
                     "Authorization": `Bearer ${token}`
@@ -133,7 +133,7 @@ const TodoList = () => {
     
         try {
             const response = await axios.put(
-                `/api/tasks/${id}`,
+                `${API_URL}/api/tasks/${id}`,
                 { completed: newStatus, completed_time: currentTime },
                 { headers: { "Authorization": `Bearer ${token}` } }
             );
@@ -154,7 +154,7 @@ const TodoList = () => {
     const deleteTask = (id) => {
         const token = localStorage.getItem('jwt_token');
     
-        axios.delete(`/api/tasks/${id}`, {
+        axios.delete(`${API_URL}/api/tasks/${id}`, {
             headers: { "Authorization": `Bearer ${token}` }
         })
         .then(() => fetchTasks())
@@ -184,41 +184,44 @@ const TodoList = () => {
                     onChange={(e) => setTaskTitle(e.target.value)}
                     placeholder="新しいタスク"
                 />
-                <span className="limit">期限 : </span>
+                <br/>
+                <div className="mobile_area">
+                    <span className="limit">期限 : </span>
 
-                <LocalizationProvider dateAdapter={AdapterDayjs}>
-                    {/* 日付と時間の両方を選択 */}
-                    <DateTimePicker
-                        label="日時を選択"
-                        value={selectedDate}  // ここではdayjsオブジェクトを保持
-                        onChange={(newValue) => {
-                            if (newValue && dayjs.isDayjs(newValue)) {
-                                setSelectedDate(newValue);
-                                setInputValue(newValue.format('YYYY年MM月DD日 HH時mm分'));  // フォーマットして更新
-                            }
-                        }}
-                        minDateTime={dayjs()}
-                        minutesStep={5}  // 5分刻み
-                        ampm={false}  // 24時間表示
-                        format="YYYY年MM月DD日 HH時mm分"
-                        slots={{
-                            textField: (params) => (
-                                <TextField
-                                {...params}
-                                value={inputValue}
-                                onChange={(e) => {
-                                    const parsedDate = dayjs(e.target.value, 'YYYY年MM月DD日 HH時mm分');
-                                    if (parsedDate.isValid()) {
-                                        setSelectedDate(parsedDate);
-                                        setInputValue(e.target.value);
-                                    }
-                                }}
-                                />
-                            )
-                        }}
-                    />
-                </LocalizationProvider>
-                <button className="add" onClick={addTask} disabled={!taskTitle}>追加</button>
+                    <LocalizationProvider dateAdapter={AdapterDayjs} locale="ja">
+                        {/* 日付と時間の両方を選択 */}
+                        <DateTimePicker
+                            label="日時を選択"
+                            value={selectedDate}  // ここではdayjsオブジェクトを保持
+                            onChange={(newValue) => {
+                                if (newValue && dayjs.isDayjs(newValue)) {
+                                    setSelectedDate(newValue);
+                                    setInputValue(newValue.format('YYYY年MM月DD日 HH時mm分'));  // フォーマットして更新
+                                }
+                            }}
+                            minDateTime={dayjs()}
+                            minutesStep={5}  // 5分刻み
+                            ampm={false}  // 24時間表示
+                            format="YYYY年MM月DD日 HH時mm分"
+                            slots={{
+                                textField: (params) => (
+                                    <TextField
+                                    {...params}
+                                    value={inputValue}
+                                    onChange={(e) => {
+                                        const parsedDate = dayjs(e.target.value, 'YYYY年MM月DD日 HH時mm分');
+                                        if (parsedDate.isValid()) {
+                                            setSelectedDate(parsedDate);
+                                            setInputValue(e.target.value);
+                                        }
+                                    }}
+                                    />
+                                )
+                            }}
+                        />
+                    </LocalizationProvider>
+                    <button className="add" onClick={addTask} disabled={!taskTitle}>追加</button>
+                </div>
             </div>
 
             {/* error表示 */}

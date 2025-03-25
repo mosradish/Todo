@@ -1,5 +1,5 @@
-import '../App.css';
 import TodoList from "./TodoList";
+import { API_URL } from "../config";
 
 const Home = () => {
 

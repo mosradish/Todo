@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { BrowserRouter as Router, Route, Routes, Navigate, useLocation } from "react-router-dom";
 import './App.css';
+import './mobile.css';
 import Header from './components/Header';
 import Footer from './components/Footer';
 import Home from "./components/Home";
