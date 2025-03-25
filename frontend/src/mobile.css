@@ -13,14 +13,24 @@
     }
 
     .input_area .task_title {
+        max-width: 100%;
         width: 100%;
         margin: 10px 0;
     }
 
     .mobile_area {
+        max-width: 100%;
         display: flex;
         width: 100%;
         margin : 10px 0;
         justify-content: space-between;
+    }
+
+    .input_area .limit {
+        margin-left: 0px;
+    }
+
+    .input_area button.add {
+        margin-right: 0px;
     }
 }

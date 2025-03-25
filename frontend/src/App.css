@@ -251,12 +251,22 @@ h5 {
 
 .input_area .task_title {
   width: 50%;
+  max-width: 50%;
+}
+
+.mobile_area {
+  display: flex;
+  max-width: 50%;
+  min-width: 570px;
+  margin : 10px 0;
+  justify-content: space-between;
 }
 
 .input_area .limit {
   min-width: 50px;
   font-size: 1.8rem;
   font-weight: bold;
+  margin: 0px 20px;
 }
 
 .input_area button.add {
@@ -269,6 +279,7 @@ h5 {
   border-bottom: 5px var(--button-shadow-color) solid;
   border-radius: 15px;
   transition: transform 0.1s ease, border-bottom 0.1s ease, background-color 0.2s ease;
+  margin: 0px 20px;
 }
 
 .input_area button.add:hover {
@@ -297,6 +308,7 @@ h5 {
   font-size: 1.6rem;
   width: 300px;
   height: 30px;
+  margin: 0px 20px;
 }
 
 .MuiTextField-root.MuiFormControl-root label {
@@ -341,16 +353,16 @@ h5 {
 }
 
 .tasklist .date {
-  width: 200px;
+  min-width: 120px;
 }
 
 .tasklist .complete {
-  width: 100px;
+  min-width: 100px;
 }
 
 .tasklist .button {
   padding: 0 15px;
-  width: 130px;
+  min-width: 130px;
 }
 
 .tasklist button {

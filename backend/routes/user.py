@@ -9,7 +9,6 @@ user_bp = Blueprint('user', __name__)
 @user_bp.route('/user', methods=['GET'])
 @jwt_required()
 def get_user():
-    print("JWTの中身:", get_jwt())  # JWTのペイロードをログ出力
     user_id = get_jwt_identity()
 
     user = User.query.get(user_id)
