@@ -40,4 +40,57 @@
         margin : 10px 0px;
         justify-content: space-between;
     }
+
+    .tasklist {
+        display: block;
+        width: 100%;
+    }
+
+    .tasklist caption {
+        width: 100%;
+        display: table-caption;
+        text-align: center;
+        caption-side: top;
+        white-space: nowrap;
+    }
+
+    .tasklist thead {
+        display: none; /* ヘッダーを非表示にする */
+    }
+
+    .tasklist tbody {
+        display: block;
+    }
+
+    .tasklist tr {
+        display: grid;
+        grid-template-columns: 1fr 1fr; /* 2列レイアウトにする */
+        margin-bottom: 10px;
+        border: 1px solid #ddd;
+        padding: 8px;
+    }
+
+    .tasklist td {
+        display: block;
+        text-align: left;
+        width: 100%;
+    }
+
+    /* 各行のデータのラベルを擬似要素で表示 */
+    .tasklist td::before {
+        content: attr(data-label) " : ";
+        font-weight: bold;
+        margin-right: 15px;
+    }
+
+    .tasklist tbody .id,
+    .tasklist tbody .title,
+    .tasklist tbody .date,
+    .tasklist tbody .complete,
+    .tasklist tbody .button {
+        border-bottom: none;
+        width: 100%;
+        margin: 0;
+        padding: 0;
+    }
 }

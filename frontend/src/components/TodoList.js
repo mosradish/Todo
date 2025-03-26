@@ -231,7 +231,7 @@ const TodoList = () => {
                 <caption><span className="red">未完了<i className="fa-regular fa-square checkbox-icon"></i></span>タスク一覧</caption>
                 <thead>
                     <tr>
-                        <th className="id">ID</th>
+                        <th className="id" >ID</th>
                         <th className="title">タイトル</th>
                         <th className="date">作成日時</th>
                         <th className="date">期限</th>
@@ -242,18 +242,18 @@ const TodoList = () => {
                 <tbody>
                     {pendingTasks.map(task => (
                         <tr key={task.id}>
-                            <th className="id">{task.id}</th>
-                            <td className="title red">{task.title}</td>
-                            <td className="date">{formatDate(task.created_at)}</td>
-                            <td className={`date ${!task.completed && (new Date(task.due_date) <= new Date()) ? 'gray' : ''} ${task.completed ? 'green' : ''}`}>
+                            <td data-label="ID" className="id">{task.id}</td>
+                            <td data-label="タイトル" className="title red">{task.title}</td>
+                            <td data-label="作成日時" className="date">{formatDate(task.created_at)}</td>
+                            <td data-label="期限" className={`date ${!task.completed && (new Date(task.due_date) <= new Date()) ? 'gray' : ''} ${task.completed ? 'green' : ''}`}>
                                 {formatDate(task.due_date)}
                             </td>
-                            <td className="button">
+                            <td data-label="操作" className="button">
                                 <button onClick={() => toggleTask(task.id, task.completed)}>
                                     {task.completed ? "未完了にする" : "完了"}
                                 </button>
                             </td>
-                            <td className="button">
+                            <td data-label="削除" className="button">
                                 <button onClick={() => deleteTask(task.id)}>削除</button>
                             </td>
                         </tr>

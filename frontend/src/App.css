@@ -305,7 +305,6 @@ h5 {
   border-bottom: 5px var(--button-shadow-color) solid;
   border-radius: 15px;
   transition: transform 0.1s ease, border-bottom 0.1s ease, background-color 0.2s ease;
-  margin: 0px 20px;
 }
 
 .input_area button.add:hover {
@@ -378,9 +377,7 @@ h5 {
 
 .tasklist tbody .title {
   min-width: 100px;
-  display: flex;
-  justify-content: space-between;
-  padding: 0 30px;
+  text-align: center;
 }
 
 .tasklist .date {
@@ -392,7 +389,7 @@ h5 {
 }
 
 .tasklist .button {
-  padding: 0 15px;
+  padding: 0 10px;
   min-width: 130px;
 }
 
@@ -455,7 +452,6 @@ h5 {
   height: 30px;
   margin: 15px 10%;
 }
-
 
 .register_form label {
   width: 100%;
