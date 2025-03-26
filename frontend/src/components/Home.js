@@ -4,7 +4,7 @@ import { API_URL } from "../config";
 const Home = () => {
 
     return (
-        <div>
+        <div className="parts_container">
             {localStorage.getItem("jwt_token") ? (
                 <TodoList />
             ) : (

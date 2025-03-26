@@ -3,6 +3,7 @@
 
 footer {
     width: 100%;
+    min-width: 550px;
     background-color: var(--footer-color);
     text-align: center;
 }

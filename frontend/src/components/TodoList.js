@@ -173,19 +173,20 @@ const TodoList = () => {
 
     return (
 
-        <div className="main_wrapper">
+        <div className="parts_container">
 
             {/* 入力欄 */}
             <div className="input_area">
-                <input
-                    className="task_title"
-                    type="text"
-                    value={taskTitle}
-                    onChange={(e) => setTaskTitle(e.target.value)}
-                    placeholder="新しいタスク"
-                />
-                <br/>
-                <div className="mobile_area">
+                <div className="mobile_area_left">
+                    <input
+                        className="task_title"
+                        type="text"
+                        value={taskTitle}
+                        onChange={(e) => setTaskTitle(e.target.value)}
+                        placeholder="新しいタスク"
+                    />
+                </div>
+                <div className="mobile_area_right">
                     <span className="limit">期限 : </span>
 
                     <LocalizationProvider dateAdapter={AdapterDayjs} locale="ja">

@@ -232,7 +232,14 @@ h5 {
 .main_wrapper {
   width: 90%;
   margin: 15px 5%;
-  flex: 1;
+}
+
+/************************************************/
+/* parts_container */
+
+.parts_container {
+  width: 100%;
+  min-width: 500px;
 }
 
 /************************************************/
@@ -240,9 +247,29 @@ h5 {
 
 .input_area {
   display: flex;
-  justify-content: space-around;
+  justify-content: space-between;
   align-items: center;
   width: 100%;
+}
+
+.mobile_area_left {
+  display: flex;
+  max-width: 35%;
+  min-width: 300px;
+  width: 100%;
+  margin : 10px 0;
+  margin-right : 5%;
+  justify-content: space-between;
+}
+
+.mobile_area_right {
+  display: flex;
+  max-width: 55%;
+  min-width: 400px;
+  width: 100%;
+  margin : 10px 0;
+  margin-left : 5%;
+  justify-content: space-between;
 }
 
 .input_area input {
@@ -250,7 +277,7 @@ h5 {
 }
 
 .input_area .task_title {
-  width: 50%;
+  width: 100%;
 }
 
 .input_area .limit {
@@ -295,8 +322,13 @@ h5 {
 .MuiTextField-root.MuiFormControl-root .MuiOutlinedInput-root {
   background-color: white;
   font-size: 1.6rem;
-  width: 300px;
+  width: 250px;
   height: 30px;
+}
+
+.MuiTextField-root.MuiFormControl-root .MuiOutlinedInput-root .css-1eeu2ag {
+  display: block;
+  margin: 10px 25px;
 }
 
 .MuiTextField-root.MuiFormControl-root label {
@@ -551,6 +583,7 @@ hr {
   border : none;
   border-bottom : var(--hr-color) dotted 10px;
   margin : 15px auto 30px auto;
+  min-width: 450px;
 }
 
 .mobile_only_display {

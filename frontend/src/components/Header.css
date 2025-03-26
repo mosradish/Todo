@@ -4,6 +4,7 @@
 header {
     background-color: var(--header-color);
     color: black;
+    min-width: 550px;
 }
 
 .title_nav {
@@ -32,6 +33,6 @@ header {
 }
 
 .logout_button:hover {
-color: #6195CA;
-text-decoration : underline;
+    color: #6195CA;
+    text-decoration : underline;
 }

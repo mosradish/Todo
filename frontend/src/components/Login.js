@@ -43,7 +43,7 @@ const Login = ({ setErrorMessage, setUser }) => {
     };
 
     return (
-        <div>
+        <div className="parts_container">
             <h2 className="title">ログイン</h2>
             <form className="login_form" onSubmit={handleSubmit}>
                 <label htmlFor="email">メールアドレス</label>

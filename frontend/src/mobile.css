@@ -13,14 +13,25 @@
     }
 
     .input_area .task_title {
-        width: 100%;
+        max-width: 100%;
+        width: calc(100% - 2px);
         margin: 10px 0;
     }
 
-    .mobile_area {
+    .mobile_area_left {
+        max-width: 100%;
+        min-width: 400px;
         display: flex;
-        width: 100%;
+        width: calc(100% - 2px);
         margin : 10px 0;
+        justify-content: space-between;
+    }
+
+    .mobile_area_right {
+        max-width: 100%;
+        display: flex;
+        width: calc(100% - 2px);
+        margin : 10px 0px;
         justify-content: space-between;
     }
 }

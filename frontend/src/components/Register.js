@@ -44,7 +44,7 @@ const Register = ({ setErrorMessage, setUser }) => {
     };
 
     return (
-        <div>
+        <div className="parts_container">
             <h2 className="title">新規登録</h2>
             <form className="register_form" onSubmit={handleSubmit}>
                 <label htmlFor="name">名前</label>
