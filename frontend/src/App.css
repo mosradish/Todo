@@ -277,10 +277,7 @@ h5 {
 }
 
 .input_area .task_title {
-<<<<<<< HEAD
   width: 100%;
-=======
-  width: 50%;
   max-width: 50%;
 }
 
@@ -290,7 +287,6 @@ h5 {
   min-width: 570px;
   margin : 10px 0;
   justify-content: space-between;
->>>>>>> 7e23e474811df4f7c57ccc6125c260ac27069601
 }
 
 .input_area .limit {

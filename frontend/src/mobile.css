@@ -14,7 +14,6 @@
 
     .input_area .task_title {
         max-width: 100%;
-<<<<<<< HEAD
         width: calc(100% - 2px);
         margin: 10px 0;
     }
@@ -22,34 +21,23 @@
     .mobile_area_left {
         max-width: 100%;
         min-width: 400px;
-=======
-        width: 100%;
+        width: calc(100%-2px);
         margin: 10px 0;
     }
 
     .mobile_area {
         max-width: 100%;
->>>>>>> 7e23e474811df4f7c57ccc6125c260ac27069601
         display: flex;
         width: calc(100% - 2px);
         margin : 10px 0;
         justify-content: space-between;
     }
 
-<<<<<<< HEAD
     .mobile_area_right {
         max-width: 100%;
         display: flex;
         width: calc(100% - 2px);
         margin : 10px 0px;
         justify-content: space-between;
-=======
-    .input_area .limit {
-        margin-left: 0px;
-    }
-
-    .input_area button.add {
-        margin-right: 0px;
->>>>>>> 7e23e474811df4f7c57ccc6125c260ac27069601
     }
 }
