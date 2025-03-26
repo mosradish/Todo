@@ -97,7 +97,7 @@ def update_task(id):
         if 'completed' in data:
             task.completed = data['completed']
             if task.completed:
-                task.completed_time = datetime.now().astimezone(japan_tz)
+                task.completed_time = datetime.now(pytz.utc)
             else:
                 task.completed_time = None  # 未完了に戻した場合、完了時間をリセット
 
