@@ -128,8 +128,8 @@ const TodoList = () => {
             return;
         }
     
-        const newStatus = !currentStatus; // 完了状態を切り替える
-        const currentTime = newStatus ? new Date().toISOString() : null; // 完了時間をセット
+        const newStatus = !currentStatus;
+        const currentTime = newStatus ? new Date().toISOString() : null;
     
         try {
             const response = await axios.put(
@@ -139,16 +139,12 @@ const TodoList = () => {
             );
     
             console.log("タスク更新成功:", response.data);
-            
-            // フェッチして最新のデータを取得
-            fetchTasks(); 
-    
+            fetchTasks();
         } catch (error) {
             setError("タスクの更新に失敗しました");
             console.error("タスク更新エラー:", error.response?.data || error.message);
         }
     };
-    
 
     // タスクを削除
     const deleteTask = (id) => {
@@ -166,7 +162,7 @@ const TodoList = () => {
     const pendingTasks = tasks.filter(task => !task.completed);
 
     const formatDate = (dateString) => {
-        if (!dateString) return "N/A"; 
+        if (!dateString) return "N/A";
         return dayjs.utc(dateString).tz("Asia/Tokyo").format("MM月DD日(ddd) HH時mm分");
     };
     
