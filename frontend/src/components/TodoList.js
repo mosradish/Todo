@@ -280,18 +280,18 @@ const TodoList = () => {
                 <tbody>
                     {completedTasks.map(task => (
                         <tr key={task.id}>
-                            <th className="id">{task.id}</th>
-                            <td className={`title ${task.completed ? 'green' : ''}`}>{task.title}</td>
+                            <td data-label="ID" className="id">{task.id}</td>
+                            <td data-label="タイトル" className={`title ${task.completed ? 'green' : ''}`}>{task.title}</td>
                             {/* 期日 */}
-                            <td className="date">
+                            <td data-label="期日" className="date">
                                 {formatDate(task.due_date)}
                             </td>
                             {/* 完了日時 */}
-                            <td className="date">
+                            <td data-label="完了日時" className="date">
                                 {formatDate(task.completed_time)}
                             </td>
                             {/* 完了差分 */}
-                            <td className={`date ${(task.due_date <= task.completed_time) ? 'red' : 'green'}`}>
+                            <td data-label="完了差分" className={`date ${(task.due_date <= task.completed_time) ? 'red' : 'green'}`}>
                                 {(task.completed_time && task.due_date) ?
                                     (() => {
                                         // due_date と completed_time の差を計算 (ミリ秒単位)
@@ -333,12 +333,13 @@ const TodoList = () => {
                                     : "N/A"
                                 }
                             </td>
-                            <td className="button">
+                            <td className="mobile_only_display"></td>
+                            <td data-label="操作" className="button">
                             <button onClick={() => toggleTask(task.id, task.completed)}>
                                     {task.completed ? "未完了にする" : "完了"}
                                 </button>
                             </td>
-                            <td className="button">
+                            <td data-label="削除" className="button">
                                 <button onClick={() => deleteTask(task.id)}>削除</button>
                             </td>
 

@@ -54,6 +54,10 @@
         white-space: nowrap;
     }
 
+    .tasklist tbody .title {
+        text-align: left;
+    }
+
     .tasklist thead {
         display: none; /* ヘッダーを非表示にする */
     }
@@ -80,7 +84,14 @@
     .tasklist td::before {
         content: attr(data-label) " : ";
         font-weight: bold;
-        margin-right: 15px;
+        display: inline-block;
+        width: 5.5em;
+    }
+
+    td.mobile_only_display::before {
+        content: "";
+        font-weight: normal;
+        display: none;
     }
 
     .tasklist tbody .id,
@@ -92,5 +103,6 @@
         width: 100%;
         margin: 0;
         padding: 0;
+        font-size: clamp(1.3rem, 2vw, 1.6rem);
     }
 }
