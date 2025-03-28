@@ -54,12 +54,12 @@ function RouterWrapper({ children, setErrorMessage, setIsChecking }) {
 
 function App() {
 
-    // 端末のwidthが550px以下の場合、scaleを550pxに調整する
+    // 端末のwidthが規定値以下の場合、scaleを規定値に調整する
     useEffect(() => {
         const adjustViewport = () => {
             const viewport = document.querySelector('meta[name="viewport"]');
-            if (window.innerWidth < 550) {
-                viewport.setAttribute("content", "width=550, initial-scale=" + (window.innerWidth / 550));
+            if (window.innerWidth < 600) {
+                viewport.setAttribute("content", "width=600, initial-scale=" + (window.innerWidth / 600));
             } else {
                 viewport.setAttribute("content", "width=device-width, initial-scale=1");
             }
