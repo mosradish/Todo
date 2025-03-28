@@ -37,8 +37,8 @@ const Header = ({ user, handleLogout, setErrorMessage, errorMessage, setFlashMes
                 }
             } catch (error) {
                 console.log("Backend unreachable, error occurred but not logging out.");
-                // 接続できない場合はログアウトしない
                 setErrorMessage("バックエンドに接続できませんでした");
+                handleLogout();
             }
         };
     

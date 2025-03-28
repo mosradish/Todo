@@ -189,10 +189,12 @@ h5 {
 /* error */
 
 .error {
+  min-width: 500px;
   font-weight: bold;
   color: red;
   line-height: 1em;
   text-align: center;
+  margin: auto;
   opacity: 1; /* 初期状態は不透明 */
   animation: fadeOut 5s forwards; /* 5秒かけてフェードアウト */
 }
@@ -210,9 +212,11 @@ h5 {
 /* flash */
 
 .flash {
+  min-width: 500px;
   font-weight: bold;
   color: orange;
   line-height: 1em;
+  margin: auto;
   text-align: center;
   opacity: 1; /* 初期状態は不透明 */
   animation: fadeOut 5s forwards; /* 5秒かけてフェードアウト */
