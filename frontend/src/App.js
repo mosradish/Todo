@@ -54,25 +54,6 @@ function RouterWrapper({ children, setErrorMessage, setIsChecking }) {
 
 function App() {
 
-    // 端末のwidthが規定値以下の場合、scaleを規定値に調整する
-    useEffect(() => {
-        const adjustViewport = () => {
-            const viewport = document.querySelector('meta[name="viewport"]');
-            if (window.innerWidth < 600) {
-                viewport.setAttribute("content", "width=600, initial-scale=" + (window.innerWidth / 600));
-            } else {
-                viewport.setAttribute("content", "width=device-width, initial-scale=1");
-            }
-        };
-
-        adjustViewport(); // 初回実行
-        window.addEventListener("resize", adjustViewport);
-
-        return () => {
-            window.removeEventListener("resize", adjustViewport);
-        };
-    }, []);
-
     const [user, setUser] = useState(() => {
         try {
             const storedUser = localStorage.getItem("user");
