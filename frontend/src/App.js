@@ -58,8 +58,8 @@ function App() {
     useEffect(() => {
         const adjustViewport = () => {
             const viewport = document.querySelector('meta[name="viewport"]');
-            if (window.innerWidth < 570) {
-                viewport.setAttribute("content", "width=550, initial-scale=" + (window.innerWidth / 570));
+            if (window.innerWidth < 550) {
+                viewport.setAttribute("content", "width=550, initial-scale=" + (window.innerWidth / 550));
             } else {
                 viewport.setAttribute("content", "width=device-width, initial-scale=1");
             }
