@@ -7,6 +7,7 @@ import Footer from './components/Footer';
 import Home from "./components/Home";
 import Register from "./components/Register";
 import Login from "./components/Login";
+import ViewportAdjuster from "./components/ViewportAdjuster";
 import useServerConnection from './hooks/useServerConnection';
 
 // RouterWrapperコンポーネントを作成して、useLocationを使用
@@ -95,6 +96,7 @@ function App() {
 
     return (
         <Router>
+            <ViewportAdjuster />
             <RouterWrapper setErrorMessage={setErrorMessage} setIsChecking={setIsChecking}>
                 <div className="app_container">
                     <Header
