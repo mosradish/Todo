@@ -227,7 +227,7 @@ h5 {
 .app_container {
   display: flex;
   flex-direction: column;
-  min-height: calc(100vh - 1.5em); /* ビューポートの高さいっぱいにする */
+  min-height: 100vh; /* ビューポートの高さいっぱいにする */
 }
 
 /************************************************/
