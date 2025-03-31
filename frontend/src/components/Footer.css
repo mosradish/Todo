@@ -6,5 +6,5 @@ footer {
     min-width: 550px;
     background-color: var(--footer-color);
     text-align: center;
-    margin-top: auto;
+    margin-top: calc(auto - 1em);
 }
