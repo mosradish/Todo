@@ -23,7 +23,7 @@ load_dotenv()
 app = Flask(__name__)
 tasks = []
 # ReactとFlaskの通信を許可
-CORS(app, supports_credentials=True)
+CORS(app, resources={r"/*": {"origins": "https://daiki-watanabe-portfolio-15306553170d.herokuapp.com/"}}, supports_credentials=True)
 
 # 環境変数 DATABASE_URL が設定されていなければ、SQLite を使用
 app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get('DATABASE_URL', 'sqlite:///app.db')
